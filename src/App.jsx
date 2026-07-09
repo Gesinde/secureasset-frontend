@@ -8,6 +8,7 @@ import Verify from './pages/Verify';
 import Maintenance from './pages/Maintenance';
 import ProtectedRoute from './components/ProtectedRoute';
 import Security from './pages/Security';
+import AuditLog from './pages/AuditLog';
 
 function App() {
   return (
@@ -60,6 +61,14 @@ function App() {
           element={
             <ProtectedRoute>
               <Security />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/audit"
+          element={
+            <ProtectedRoute>
+              <AuditLog />
             </ProtectedRoute>
           }
         />
