@@ -4,6 +4,7 @@ import Dashboard from './pages/Dashboard';
 import Assets from './pages/Assets';
 import AddAsset from './pages/AddAsset';
 import AssetDetail from './pages/AssetDetail';
+import Verify from './pages/Verify';
 import ProtectedRoute from './components/ProtectedRoute';
 
 function App() {
@@ -11,6 +12,7 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/login" element={<Login />} />
+        <Route path="/verify/:id" element={<Verify />} />
         <Route
           path="/dashboard"
           element={
