@@ -5,6 +5,7 @@ import Assets from './pages/Assets';
 import AddAsset from './pages/AddAsset';
 import AssetDetail from './pages/AssetDetail';
 import Verify from './pages/Verify';
+import Maintenance from './pages/Maintenance';
 import ProtectedRoute from './components/ProtectedRoute';
 
 function App() {
@@ -42,6 +43,14 @@ function App() {
           element={
             <ProtectedRoute>
               <AssetDetail />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/maintenance"
+          element={
+            <ProtectedRoute>
+              <Maintenance />
             </ProtectedRoute>
           }
         />
