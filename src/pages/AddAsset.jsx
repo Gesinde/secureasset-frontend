@@ -2,13 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { createAsset } from '../services/assetService';
 import Navbar from '../components/Navbar';
-
-const DEPARTMENTS = [
-  'Economics', 'Political Science', 'Sociology', 'Mass Communication',
-  'Accounting', 'Business Administration', 'Banking and Finance',
-  'Computer Science', 'Biology', 'Chemistry', 'Physics',
-  'Microbiology', 'Biochemistry', 'Mathematics'
-];
+import { DEPARTMENTS } from '../utils/departments';
 
 function AddAsset() {
   const [formData, setFormData] = useState({

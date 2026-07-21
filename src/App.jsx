@@ -11,6 +11,7 @@ import Security from './pages/Security';
 import AuditLog from './pages/AuditLog';
 import Scan from './pages/Scan';
 import ProtectedRoute from './components/ProtectedRoute';
+import Transfers from './pages/Transfers';
 
 function App() {
   return (
@@ -81,6 +82,14 @@ function App() {
             <ProtectedRoute>
               <Scan />
             </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/transfers"
+          element={
+            <ProtectedRoute>
+              <Transfers />
+           </ProtectedRoute>
           }
         />
         <Route path="/" element={<Navigate to="/dashboard" replace />} />

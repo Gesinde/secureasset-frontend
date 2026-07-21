@@ -39,6 +39,9 @@ function Navbar() {
               Audit Log
             </Link>
           )}
+          <Link to="/transfers" className="text-gray-300 hover:text-white text-sm">
+            Transfers
+          </Link>
         </div>
 
         <div className="flex items-center gap-4">
