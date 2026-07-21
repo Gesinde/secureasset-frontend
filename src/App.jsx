@@ -5,11 +5,12 @@ import Assets from './pages/Assets';
 import AddAsset from './pages/AddAsset';
 import AssetDetail from './pages/AssetDetail';
 import Verify from './pages/Verify';
+import PublicAsset from './pages/PublicAsset';
 import Maintenance from './pages/Maintenance';
-import ProtectedRoute from './components/ProtectedRoute';
 import Security from './pages/Security';
 import AuditLog from './pages/AuditLog';
-import PublicAsset from './pages/PublicAsset';
+import Scan from './pages/Scan';
+import ProtectedRoute from './components/ProtectedRoute';
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/verify/:id" element={<Verify />} />
+        <Route path="/public/asset/:id" element={<PublicAsset />} />
         <Route
           path="/dashboard"
           element={
@@ -73,8 +75,15 @@ function App() {
             </ProtectedRoute>
           }
         />
+        <Route
+          path="/scan"
+          element={
+            <ProtectedRoute>
+              <Scan />
+            </ProtectedRoute>
+          }
+        />
         <Route path="/" element={<Navigate to="/dashboard" replace />} />
-        <Route path="/public/asset/:id" element={<PublicAsset />} />
       </Routes>
     </BrowserRouter>
   );

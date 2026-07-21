@@ -6,7 +6,7 @@ function Navbar() {
 
   if (!user) return null;
 
-  const canManageAssets = user.role === 'system_admin';
+
   const canViewAudit = ['system_admin', 'auditor'].includes(user.role);
   const canViewSecurity = ['system_admin', 'security_officer', 'auditor'].includes(user.role);
   const canViewMaintenance = true; // all roles have some maintenance visibility
@@ -20,6 +20,9 @@ function Navbar() {
           </Link>
           <Link to="/assets" className="text-gray-300 hover:text-white text-sm">
             Assets
+          </Link>
+          <Link to="/scan" className="text-gray-300 hover:text-white text-sm">
+           Scan
           </Link>
           {canViewMaintenance && (
             <Link to="/maintenance" className="text-gray-300 hover:text-white text-sm">
