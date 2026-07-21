@@ -9,6 +9,7 @@ import Maintenance from './pages/Maintenance';
 import ProtectedRoute from './components/ProtectedRoute';
 import Security from './pages/Security';
 import AuditLog from './pages/AuditLog';
+import PublicAsset from './pages/PublicAsset';
 
 function App() {
   return (
@@ -73,6 +74,7 @@ function App() {
           }
         />
         <Route path="/" element={<Navigate to="/dashboard" replace />} />
+        <Route path="/public/asset/:id" element={<PublicAsset />} />
       </Routes>
     </BrowserRouter>
   );
