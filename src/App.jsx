@@ -12,6 +12,7 @@ import AuditLog from './pages/AuditLog';
 import Scan from './pages/Scan';
 import ProtectedRoute from './components/ProtectedRoute';
 import Transfers from './pages/Transfers';
+import EditAsset from './pages/EditAsset';
 
 function App() {
   return (
@@ -49,6 +50,14 @@ function App() {
           element={
             <ProtectedRoute>
               <AssetDetail />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/assets/:id/edit"
+          element={
+            <ProtectedRoute>
+              <EditAsset />
             </ProtectedRoute>
           }
         />

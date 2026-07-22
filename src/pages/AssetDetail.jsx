@@ -2,19 +2,22 @@ import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { getAssetById } from '../services/assetService';
 import Navbar from '../components/Navbar';
+import { useAuth } from '../context/AuthContext';
 
 function AssetDetail() {
   const { id } = useParams();
   const [asset, setAsset] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const { user } = useAuth();
+  const canEdit = user?.role === 'system_admin' || (user?.role === 'department_head' && user?.department === asset?.department);
 
   useEffect(() => {
     const fetchAsset = async () => {
       try {
         const data = await getAssetById(id);
         setAsset(data);
-      } catch (err) {
+      } catch  {
         setError('Failed to load asset.');
       } finally {
         setLoading(false);
@@ -52,9 +55,15 @@ function AssetDetail() {
     <div className="min-h-screen bg-gray-900">
       <Navbar />
       <div className="p-8 max-w-3xl mx-auto">
+        
         <Link to="/assets" className="text-blue-400 hover:underline text-sm">
-          ← Back to Assets
+           ← Back to Assets
         </Link>
+        {canEdit && (
+        <Link to={`/assets/${asset._id}/edit`} className="text-blue-400 hover:underline text-sm ml-4">
+          Edit Asset
+        </Link>
+      )}
 
         <div className="bg-gray-800 rounded-lg p-6 mt-4 flex flex-col md:flex-row gap-8">
           <div className="flex-1">

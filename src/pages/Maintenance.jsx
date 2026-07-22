@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { getMaintenanceRequests, createMaintenanceRequest, updateMaintenanceRequest } from '../services/maintenanceService';
 import { getAssets } from '../services/assetService';
 import { getUsers } from '../services/userService';
@@ -34,7 +34,7 @@ function Maintenance() {
   const canManage = ['system_admin', 'maintenance_officer', 'maintenance_technician'].includes(user?.role);
   const canAssign = ['system_admin', 'maintenance_officer'].includes(user?.role);
 
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     try {
       const reqData = await getMaintenanceRequests();
       setRequests(reqData);
@@ -46,16 +46,18 @@ function Maintenance() {
         const techData = await getUsers({ role: 'maintenance_technician' });
         setTechnicians(techData);
       }
-    } catch (err) {
+    } catch {
       setError('Failed to load maintenance requests.');
     } finally {
       setLoading(false);
     }
-  };
+  }, [canRaise, canAssign]);
 
+   
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchData();
-  }, []);
+  }, [fetchData]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -64,7 +66,7 @@ function Maintenance() {
       setFormData({ assetId: '', description: '', priority: 'medium' });
       setShowForm(false);
       fetchData();
-    } catch (err) {
+    } catch {
       alert('Failed to raise request.');
     }
   };
@@ -74,7 +76,7 @@ function Maintenance() {
       await updateMaintenanceRequest(id, { assignedTechnician: technicianId });
       setAssigningId(null);
       fetchData();
-    } catch (err) {
+    } catch {
       alert('Failed to assign technician.');
     }
   };
@@ -83,7 +85,7 @@ function Maintenance() {
     try {
       await updateMaintenanceRequest(id, { status });
       fetchData();
-    } catch (err) {
+    } catch {
       alert('Failed to update status.');
     }
   };
