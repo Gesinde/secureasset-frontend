@@ -13,6 +13,7 @@ import Scan from './pages/Scan';
 import ProtectedRoute from './components/ProtectedRoute';
 import Transfers from './pages/Transfers';
 import EditAsset from './pages/EditAsset';
+import UserManagement from './pages/UserManagement';
 
 function App() {
   return (
@@ -99,6 +100,14 @@ function App() {
             <ProtectedRoute>
               <Transfers />
            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/users"
+          element={
+            <ProtectedRoute>
+              <UserManagement />
+            </ProtectedRoute>
           }
         />
         <Route path="/" element={<Navigate to="/dashboard" replace />} />

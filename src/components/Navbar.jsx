@@ -42,6 +42,11 @@ function Navbar() {
           <Link to="/transfers" className="text-gray-300 hover:text-white text-sm">
             Transfers
           </Link>
+          {user.role === 'system_admin' && (
+          <Link to="/users" className="text-gray-300 hover:text-white text-sm">
+            Users
+          </Link>
+        )}
         </div>
 
         <div className="flex items-center gap-4">
