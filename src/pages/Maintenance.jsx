@@ -1,26 +1,38 @@
 import { useState, useEffect } from 'react';
 import { getMaintenanceRequests, createMaintenanceRequest, updateMaintenanceRequest } from '../services/maintenanceService';
 import { getAssets } from '../services/assetService';
+import { getUsers } from '../services/userService';
 import { useAuth } from '../context/AuthContext';
 import Navbar from '../components/Navbar';
+
+const COLUMNS = [
+  { key: 'pending', label: 'Pending' },
+  { key: 'assigned', label: 'Assigned' },
+  { key: 'in_progress', label: 'In Progress' },
+  { key: 'resolved', label: 'Resolved' },
+];
+
+const PRIORITY_COLOR = {
+  low: 'bg-gray-500/20 text-gray-400',
+  medium: 'bg-blue-500/20 text-blue-400',
+  high: 'bg-orange-500/20 text-orange-400',
+  urgent: 'bg-red-500/20 text-red-400',
+};
 
 function Maintenance() {
   const [requests, setRequests] = useState([]);
   const [assets, setAssets] = useState([]);
+  const [technicians, setTechnicians] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
-  const [formData, setFormData] = useState({ assetId: '', description: '' });
+  const [formData, setFormData] = useState({ assetId: '', description: '', priority: 'medium' });
+  const [assigningId, setAssigningId] = useState(null);
   const [error, setError] = useState('');
   const { user } = useAuth();
 
   const canRaise = ['system_admin', 'department_head', 'department_staff', 'maintenance_officer'].includes(user?.role);
-  const canUpdate = ['system_admin', 'maintenance_officer', 'maintenance_technician'].includes(user?.role);
-
-  const statusColor = {
-    pending: 'bg-yellow-500/20 text-yellow-400',
-    in_progress: 'bg-blue-500/20 text-blue-400',
-    resolved: 'bg-green-500/20 text-green-400',
-  };
+  const canManage = ['system_admin', 'maintenance_officer', 'maintenance_technician'].includes(user?.role);
+  const canAssign = ['system_admin', 'maintenance_officer'].includes(user?.role);
 
   const fetchData = async () => {
     try {
@@ -29,6 +41,10 @@ function Maintenance() {
       if (canRaise) {
         const assetData = await getAssets();
         setAssets(assetData);
+      }
+      if (canAssign) {
+        const techData = await getUsers({ role: 'maintenance_technician' });
+        setTechnicians(techData);
       }
     } catch (err) {
       setError('Failed to load maintenance requests.');
@@ -45,11 +61,21 @@ function Maintenance() {
     e.preventDefault();
     try {
       await createMaintenanceRequest(formData);
-      setFormData({ assetId: '', description: '' });
+      setFormData({ assetId: '', description: '', priority: 'medium' });
       setShowForm(false);
       fetchData();
     } catch (err) {
       alert('Failed to raise request.');
+    }
+  };
+
+  const handleAssign = async (id, technicianId) => {
+    try {
+      await updateMaintenanceRequest(id, { assignedTechnician: technicianId });
+      setAssigningId(null);
+      fetchData();
+    } catch (err) {
+      alert('Failed to assign technician.');
     }
   };
 
@@ -61,6 +87,8 @@ function Maintenance() {
       alert('Failed to update status.');
     }
   };
+
+  const requestsByColumn = (columnKey) => requests.filter((r) => r.status === columnKey);
 
   return (
     <div className="min-h-screen bg-gray-900">
@@ -90,10 +118,21 @@ function Maintenance() {
               >
                 <option value="">Select asset</option>
                 {assets.map((asset) => (
-                  <option key={asset._id} value={asset._id}>
-                    {asset.name} ({asset.serialNumber})
-                  </option>
+                  <option key={asset._id} value={asset._id}>{asset.name} ({asset.serialNumber})</option>
                 ))}
+              </select>
+            </div>
+            <div>
+              <label className="block text-gray-300 text-sm mb-1">Priority</label>
+              <select
+                value={formData.priority}
+                onChange={(e) => setFormData({ ...formData, priority: e.target.value })}
+                className="w-full px-3 py-2 rounded bg-gray-700 text-white border border-gray-600 focus:outline-none focus:border-blue-500"
+              >
+                <option value="low">Low</option>
+                <option value="medium">Medium</option>
+                <option value="high">High</option>
+                <option value="urgent">Urgent</option>
               </select>
             </div>
             <div>
@@ -107,59 +146,84 @@ function Maintenance() {
                 placeholder="Describe the issue..."
               />
             </div>
-            <button
-              type="submit"
-              className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded text-sm font-semibold"
-            >
+            <button type="submit" className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded text-sm font-semibold">
               Submit Request
             </button>
           </form>
         )}
 
         {error && <p className="text-red-400 mb-4">{error}</p>}
+
         {loading ? (
           <p className="text-gray-400">Loading...</p>
-        ) : requests.length === 0 ? (
-          <p className="text-gray-400">No maintenance requests found.</p>
         ) : (
-          <div className="space-y-3">
-            {requests.map((req) => (
-              <div key={req._id} className="bg-gray-800 rounded-lg p-4">
-                <div className="flex justify-between items-start">
-                  <div>
-                    <p className="text-white font-semibold">{req.asset?.name}</p>
-                    <p className="text-gray-400 text-sm">{req.asset?.serialNumber} · {req.asset?.department}</p>
-                    <p className="text-gray-300 text-sm mt-2">{req.description}</p>
-                    <p className="text-gray-500 text-xs mt-2">
-                      Raised by {req.raisedBy?.name} ({req.raisedBy?.role})
-                      {req.assignedTechnician && ` · Assigned to ${req.assignedTechnician.name}`}
-                    </p>
-                  </div>
-                  <span className={`px-2 py-1 rounded text-xs whitespace-nowrap ${statusColor[req.status]}`}>
-                    {req.status.replace('_', ' ')}
-                  </span>
-                </div>
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            {COLUMNS.map((col) => (
+              <div key={col.key} className="bg-gray-800/50 rounded-lg p-3">
+                <h3 className="text-gray-300 text-sm font-semibold mb-3 flex justify-between">
+                  {col.label}
+                  <span className="text-gray-500">{requestsByColumn(col.key).length}</span>
+                </h3>
+                <div className="space-y-2">
+                  {requestsByColumn(col.key).map((req) => (
+                    <div key={req._id} className="bg-gray-800 rounded-lg p-3 text-sm">
+                      <div className="flex justify-between items-start mb-1">
+                        <p className="text-white font-medium">{req.asset?.name}</p>
+                        <span className={`px-2 py-0.5 rounded text-xs ${PRIORITY_COLOR[req.priority]}`}>
+                          {req.priority}
+                        </span>
+                      </div>
+                      <p className="text-gray-400 text-xs mb-2">{req.description}</p>
+                      {req.assignedTechnician && (
+                        <p className="text-gray-500 text-xs mb-2">→ {req.assignedTechnician.name}</p>
+                      )}
 
-                {canUpdate && req.status !== 'resolved' && (
-                  <div className="mt-3 flex gap-2">
-                    {req.status === 'pending' && (
-                      <button
-                        onClick={() => handleStatusChange(req._id, 'in_progress')}
-                        className="text-xs bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded"
-                      >
-                        Mark In Progress
-                      </button>
-                    )}
-                    {req.status === 'in_progress' && (
-                      <button
-                        onClick={() => handleStatusChange(req._id, 'resolved')}
-                        className="text-xs bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded"
-                      >
-                        Mark Resolved
-                      </button>
-                    )}
-                  </div>
-                )}
+                      {canAssign && req.status === 'pending' && (
+                        <div>
+                          {assigningId === req._id ? (
+                            <select
+                              onChange={(e) => handleAssign(req._id, e.target.value)}
+                              className="w-full text-xs bg-gray-700 text-white border border-gray-600 rounded px-2 py-1"
+                              defaultValue=""
+                            >
+                              <option value="" disabled>Choose technician</option>
+                              {technicians.map((t) => (
+                                <option key={t._id} value={t._id}>{t.name}</option>
+                              ))}
+                            </select>
+                          ) : (
+                            <button
+                              onClick={() => setAssigningId(req._id)}
+                              className="text-xs bg-gray-700 hover:bg-gray-600 text-white px-2 py-1 rounded w-full"
+                            >
+                              Assign Technician
+                            </button>
+                          )}
+                        </div>
+                      )}
+
+                      {canManage && req.status === 'assigned' && (
+                        <button
+                          onClick={() => handleStatusChange(req._id, 'in_progress')}
+                          className="text-xs bg-blue-600 hover:bg-blue-700 text-white px-2 py-1 rounded w-full"
+                        >
+                          Start Work
+                        </button>
+                      )}
+                      {canManage && req.status === 'in_progress' && (
+                        <button
+                          onClick={() => handleStatusChange(req._id, 'resolved')}
+                          className="text-xs bg-green-600 hover:bg-green-700 text-white px-2 py-1 rounded w-full"
+                        >
+                          Mark Resolved
+                        </button>
+                      )}
+                    </div>
+                  ))}
+                  {requestsByColumn(col.key).length === 0 && (
+                    <p className="text-gray-600 text-xs italic">No requests</p>
+                  )}
+                </div>
               </div>
             ))}
           </div>
