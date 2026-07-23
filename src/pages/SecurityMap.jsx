@@ -15,7 +15,7 @@ L.Icon.Default.mergeOptions({
 
 // Matches backend/config/campusBoundary.js - if you update that file with real
 // coordinates, update these four numbers to match
-const BOUNDARY = { NORTH: 6.5385, SOUTH: 6.5287, EAST: 3.1395, WEST: 3.1288 };
+const BOUNDARY = { NORTH: 6.5339, SOUTH: 6.5239, EAST: 3.1408, WEST: 3.1308 };
 const CENTER = [(BOUNDARY.NORTH + BOUNDARY.SOUTH) / 2, (BOUNDARY.EAST + BOUNDARY.WEST) / 2];
 
 const INCIDENT_STATUS_COLOR = {
