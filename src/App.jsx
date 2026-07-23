@@ -14,6 +14,7 @@ import ProtectedRoute from './components/ProtectedRoute';
 import Transfers from './pages/Transfers';
 import EditAsset from './pages/EditAsset';
 import UserManagement from './pages/UserManagement';
+import AdminDashboard from './pages/AdminDashboard';
 
 function App() {
   return (
@@ -110,8 +111,19 @@ function App() {
             </ProtectedRoute>
           }
         />
+
+          <Route
+            path="/admin"
+            element={
+              <ProtectedRoute>
+                <AdminDashboard />
+              </ProtectedRoute>
+            }
+          />
+
         <Route path="/" element={<Navigate to="/dashboard" replace />} />
       </Routes>
+
     </BrowserRouter>
   );
 }

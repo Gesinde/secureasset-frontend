@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import NotificationBell from './NotificationBell';
 
 function Navbar() {
   const { user, logoutUser } = useAuth();
@@ -47,12 +48,18 @@ function Navbar() {
             Users
           </Link>
         )}
+        {user.role === 'system_admin' && (
+        <Link to="/admin" className="text-gray-300 hover:text-white text-sm">
+          Dashboard
+        </Link>
+      )}
         </div>
 
         <div className="flex items-center gap-4">
           <span className="text-gray-400 text-sm">
             {user.name} <span className="text-gray-500">({user.role})</span>
           </span>
+          <NotificationBell />
           <button
             onClick={logoutUser}
             className="bg-red-600 hover:bg-red-700 text-white text-sm px-3 py-1.5 rounded transition"
