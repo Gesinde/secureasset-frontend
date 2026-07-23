@@ -35,6 +35,13 @@ function Navbar() {
               Security
             </Link>
           )}
+
+          {canViewSecurity && (
+            <Link to="/security-map" className="text-gray-300 hover:text-white text-sm">
+              Map
+            </Link>
+          )}
+
           {canViewAudit && (
             <Link to="/audit" className="text-gray-300 hover:text-white text-sm">
               Audit Log

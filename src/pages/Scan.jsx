@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import QrScanner from '../components/QrScanner';
@@ -42,20 +42,20 @@ function Scan() {
 
   const canAudit = ['system_admin', 'auditor'].includes(user?.role);
 
-  const loadSession = async () => {
-    if (!canAudit) {
-      setSessionLoading(false);
-      return;
-    }
-    try {
-      const data = await getMyOpenSession();
-      setSession(data);
-    } catch {
-      setSession(null);
-    } finally {
-      setSessionLoading(false);
-    }
-  };
+ const loadSession = useCallback(async () => {
+  if (!canAudit) {
+    setSessionLoading(false);
+    return;
+  }
+  try {
+    const data = await getMyOpenSession();
+    setSession(data);
+  } catch {
+    setSession(null);
+  } finally {
+    setSessionLoading(false);
+  }
+}, [canAudit]);
 
   const handleOpenSession = async () => {
     try {
@@ -76,10 +76,11 @@ function Scan() {
     }
   };
 
-  // eslint-disable-next-line react-hooks/set-state-in-effect -- loadSession is async; state is set safely after the await, not synchronously
+   
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     loadSession();
-  }, []);
+  }, [loadSession]);
 
   const captureGps = () => {
     return new Promise((resolve) => {

@@ -15,6 +15,7 @@ import Transfers from './pages/Transfers';
 import EditAsset from './pages/EditAsset';
 import UserManagement from './pages/UserManagement';
 import AdminDashboard from './pages/AdminDashboard';
+import SecurityMap from './pages/SecurityMap';
 
 function App() {
   return (
@@ -117,6 +118,15 @@ function App() {
             element={
               <ProtectedRoute>
                 <AdminDashboard />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/security-map"
+            element={
+              <ProtectedRoute>
+                <SecurityMap />
               </ProtectedRoute>
             }
           />
