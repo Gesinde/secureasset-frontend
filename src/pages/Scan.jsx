@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import QrScanner from '../components/QrScanner';
@@ -6,6 +6,7 @@ import { useAuth } from '../context/AuthContext';
 import { getAssetById } from '../services/assetService';
 import { logScan, recordScanAction } from '../services/scanService';
 import { extractAssetIdFromScan, saveToOfflineCache, getFromOfflineCache } from '../utils/scanHelpers';
+import { openSession, getMyOpenSession, closeSession } from '../services/auditSessionService';
 
 const ACTIONS_BY_ROLE = {
   auditor: ['verified', 'missing', 'misplaced', 'damaged'],
@@ -34,8 +35,51 @@ function Scan() {
   const [error, setError] = useState('');
   const [actionMessage, setActionMessage] = useState('');
   const [manualId, setManualId] = useState('');
+  const [session, setSession] = useState(null);
+  const [sessionLoading, setSessionLoading] = useState(true);
   const { user } = useAuth();
   const navigate = useNavigate();
+
+  const canAudit = ['system_admin', 'auditor'].includes(user?.role);
+
+  const loadSession = async () => {
+    if (!canAudit) {
+      setSessionLoading(false);
+      return;
+    }
+    try {
+      const data = await getMyOpenSession();
+      setSession(data);
+    } catch {
+      setSession(null);
+    } finally {
+      setSessionLoading(false);
+    }
+  };
+
+  const handleOpenSession = async () => {
+    try {
+      const data = await openSession();
+      setSession(data);
+    } catch (err) {
+      alert(err.response?.data?.message || 'Failed to open session.');
+    }
+  };
+
+  const handleCloseSession = async () => {
+    if (!window.confirm('Close this audit session? Final counts will be locked in.')) return;
+    try {
+      await closeSession(session._id);
+      setSession(null);
+    } catch {
+      alert('Failed to close session.');
+    }
+  };
+
+  // eslint-disable-next-line react-hooks/set-state-in-effect -- loadSession is async; state is set safely after the await, not synchronously
+  useEffect(() => {
+    loadSession();
+  }, []);
 
   const captureGps = () => {
     return new Promise((resolve) => {
@@ -45,7 +89,7 @@ function Scan() {
       }
       navigator.geolocation.getCurrentPosition(
         (pos) => resolve({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
-        () => resolve({ lat: null, lng: null }), // permission denied or failed — proceed without GPS
+        () => resolve({ lat: null, lng: null }),
         { timeout: 5000 }
       );
     });
@@ -95,6 +139,7 @@ function Scan() {
     try {
       await recordScanAction({ assetId: asset._id, action });
       setActionMessage(`Recorded: ${ACTION_LABELS[action]}`);
+      if (session) loadSession();
     } catch (err) {
       setActionMessage(err.response?.data?.message || 'Failed to record action.');
     }
@@ -114,6 +159,49 @@ function Scan() {
       <Navbar />
       <div className="p-8 max-w-lg mx-auto">
         <h1 className="text-2xl font-bold text-white mb-6">Scan Asset</h1>
+
+        {canAudit && !sessionLoading && (
+          <div className="bg-gray-800 p-4 rounded-lg mb-6">
+            {session ? (
+              <div>
+                <div className="flex justify-between items-center mb-3">
+                  <p className="text-white text-sm font-semibold">Audit Session Active</p>
+                  <button
+                    onClick={handleCloseSession}
+                    className="text-xs bg-red-600 hover:bg-red-700 text-white px-3 py-1.5 rounded"
+                  >
+                    Close Session
+                  </button>
+                </div>
+                <div className="grid grid-cols-4 gap-2 text-center">
+                  <div>
+                    <p className="text-green-400 text-lg font-bold">{session.verifiedCount}</p>
+                    <p className="text-gray-500 text-xs">Verified</p>
+                  </div>
+                  <div>
+                    <p className="text-red-400 text-lg font-bold">{session.missingCount}</p>
+                    <p className="text-gray-500 text-xs">Missing</p>
+                  </div>
+                  <div>
+                    <p className="text-yellow-400 text-lg font-bold">{session.misplacedCount}</p>
+                    <p className="text-gray-500 text-xs">Misplaced</p>
+                  </div>
+                  <div>
+                    <p className="text-orange-400 text-lg font-bold">{session.damagedCount}</p>
+                    <p className="text-gray-500 text-xs">Damaged</p>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <button
+                onClick={handleOpenSession}
+                className="bg-blue-600 hover:bg-blue-700 text-white text-sm px-4 py-2 rounded w-full"
+              >
+                Start Audit Session
+              </button>
+            )}
+          </div>
+        )}
 
         {scanning && (
           <div className="bg-gray-800 p-4 rounded-lg">
