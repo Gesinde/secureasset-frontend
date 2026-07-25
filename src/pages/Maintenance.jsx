@@ -60,16 +60,16 @@ function Maintenance() {
   }, [fetchData]);
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      await createMaintenanceRequest(formData);
-      setFormData({ assetId: '', description: '', priority: 'medium' });
-      setShowForm(false);
-      fetchData();
-    } catch {
-      alert('Failed to raise request.');
-    }
-  };
+  e.preventDefault();
+  try {
+    await createMaintenanceRequest(formData);
+    setFormData({ assetId: '', description: '', priority: 'medium' });
+    setShowForm(false);
+    fetchData();
+  } catch (err) {
+    alert(err.response?.data?.message || 'Failed to raise request.');
+  }
+};
 
   const handleAssign = async (id, technicianId) => {
     try {

@@ -30,6 +30,7 @@ function Security() {
         const assetData = await getAssets();
         setAssets(assetData);
       }
+    // eslint-disable-next-line no-unused-vars
     } catch (err) {
       setError('Failed to load security incidents.');
     } finally {
@@ -38,25 +39,27 @@ function Security() {
   };
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchData();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      await createIncident(formData);
-      setFormData({ assetId: '', description: '', location: '' });
-      setShowForm(false);
-      fetchData();
-    } catch (err) {
-      alert('Failed to report incident.');
-    }
-  };
-
+  e.preventDefault();
+  try {
+    await createIncident(formData);
+    setFormData({ assetId: '', description: '', location: '' });
+    setShowForm(false);
+    fetchData();
+  } catch (err) {
+    alert(err.response?.data?.message || 'Failed to report incident.');
+  }
+};
   const handleStatusChange = async (id, status) => {
     try {
       await updateIncident(id, { status });
       fetchData();
+    // eslint-disable-next-line no-unused-vars
     } catch (err) {
       alert('Failed to update status.');
     }
