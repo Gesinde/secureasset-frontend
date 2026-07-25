@@ -55,6 +55,13 @@ function Navbar() {
               Dashboard
             </Link>
           )}
+
+          {user.role === 'system_admin' && (
+            <Link to="/departments" className="text-gray-300 hover:text-white text-sm">
+              Departments
+            </Link>
+          )}
+
         </div>
 
         <div className="flex items-center gap-4">

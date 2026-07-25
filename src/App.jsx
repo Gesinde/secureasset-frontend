@@ -16,6 +16,7 @@ import EditAsset from './pages/EditAsset';
 import UserManagement from './pages/UserManagement';
 import AdminDashboard from './pages/AdminDashboard';
 import SecurityMap from './pages/SecurityMap';
+import DepartmentManagement from './pages/DepartmentManagement';
 
 function App() {
   return (
@@ -127,6 +128,15 @@ function App() {
             element={
               <ProtectedRoute allowedRoles={['system_admin', 'security_officer', 'auditor']}>
                 <SecurityMap />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/departments"
+            element={
+              <ProtectedRoute allowedRoles={['system_admin']}>
+                <DepartmentManagement />
               </ProtectedRoute>
             }
           />
