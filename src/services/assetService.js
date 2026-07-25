@@ -24,3 +24,13 @@ export const deleteAsset = async (id) => {
   const response = await api.delete(`/assets/${id}`);
   return response.data;
 };
+
+export const assignCustodian = async (id, custodianId) => {
+  const response = await api.put(`/assets/${id}/assign-custodian`, { custodianId });
+  return response.data;
+};
+
+export const acceptCustody = async (id) => {
+  const response = await api.put(`/assets/${id}/accept-custody`);
+  return response.data;
+};

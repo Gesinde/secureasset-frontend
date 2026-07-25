@@ -3,6 +3,8 @@ import { useParams, Link } from 'react-router-dom';
 import { getAssetById } from '../services/assetService';
 import Navbar from '../components/Navbar';
 import { useAuth } from '../context/AuthContext';
+import { assignCustodian, acceptCustody } from '../services/assetService';
+import { getUsers } from '../services/userService';
 
 const daysSince = (dateString) => {
   const diffMs = Date.now() - new Date(dateString).getTime();
@@ -14,6 +16,9 @@ function AssetDetail() {
   const [asset, setAsset] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [staffList, setStaffList] = useState([]);
+  const [showAssignForm, setShowAssignForm] = useState(false);
+  const [selectedCustodian, setSelectedCustodian] = useState('');
   const { user } = useAuth();
   const canEdit = user?.role === 'system_admin' || (user?.role === 'department_head' && user?.department === asset?.department);
 
@@ -31,6 +36,12 @@ function AssetDetail() {
     fetchAsset();
   }, [id]);
 
+  useEffect(() => {
+  if (asset && canEdit) {
+    getUsers({ department: asset.department }).then(setStaffList).catch(() => {});
+  }
+}, [asset, canEdit]);
+
   const handleDownloadQR = () => {
     const link = document.createElement('a');
     link.href = asset.qrCodeImage;
@@ -46,6 +57,27 @@ function AssetDetail() {
       </div>
     );
   }
+
+  const handleAssignCustodian = async () => {
+  try {
+    const updated = await assignCustodian(asset._id, selectedCustodian);
+    setAsset(updated);
+    setShowAssignForm(false);
+  } catch (err) {
+    alert(err.response?.data?.message || 'Failed to assign custodian.');
+  }
+};
+
+const handleAcceptCustody = async () => {
+  try {
+    const updated = await acceptCustody(asset._id);
+    setAsset(updated);
+  } catch (err) {
+    alert(err.response?.data?.message || 'Failed to accept custody.');
+  }
+};
+
+const isMyCustody = asset?.custodian?._id === user?.id;
 
   if (error || !asset) {
     return (
@@ -94,6 +126,67 @@ function AssetDetail() {
                 <dt className="text-gray-400">Status</dt>
                 <dd className="text-white">{asset.status.replace('_', ' ')}</dd>
               </div>
+
+              <div className="mt-6 pt-4 border-t border-gray-700">
+                <p className="text-gray-400 text-sm mb-2">Custodian</p>
+                {asset.custodian ? (
+                  <div>
+                    <p className="text-white text-sm">{asset.custodian.name} ({asset.custodian.role})</p>
+                    <p className="text-gray-500 text-xs">
+                      {asset.custodianAcceptedAt
+                        ? `Accepted ${new Date(asset.custodianAcceptedAt).toLocaleDateString()}`
+                        : 'Awaiting acceptance'}
+                    </p>
+                    {isMyCustody && !asset.custodianAcceptedAt && (
+                      <button
+                        onClick={handleAcceptCustody}
+                        className="mt-2 bg-green-600 hover:bg-green-700 text-white text-xs px-3 py-1.5 rounded"
+                      >
+                        Accept Custody
+                      </button>
+                    )}
+                  </div>
+                ) : (
+                  <p className="text-gray-500 text-sm">No custodian assigned</p>
+                )}
+
+                {canEdit && (
+                  <div className="mt-3">
+                    {showAssignForm ? (
+                      <div className="flex gap-2">
+                        <select
+                          value={selectedCustodian}
+                          onChange={(e) => setSelectedCustodian(e.target.value)}
+                          className="flex-1 px-2 py-1.5 rounded bg-gray-700 text-white text-xs border border-gray-600"
+                        >
+                          <option value="">Select staff member</option>
+                          {staffList.map((s) => (
+                            <option key={s._id} value={s._id}>{s.name} ({s.role})</option>
+                          ))}
+                        </select>
+                        <button
+                          onClick={handleAssignCustodian}
+                          disabled={!selectedCustodian}
+                          className="bg-blue-600 hover:bg-blue-700 text-white text-xs px-3 py-1.5 rounded disabled:opacity-50"
+                        >
+                          Assign
+                        </button>
+                        <button onClick={() => setShowAssignForm(false)} className="text-gray-400 text-xs">
+                          Cancel
+                        </button>
+                      </div>
+                    ) : (
+                      <button
+                        onClick={() => setShowAssignForm(true)}
+                        className="text-blue-400 hover:underline text-xs"
+                      >
+                        {asset.custodian ? 'Reassign Custodian' : 'Assign Custodian'}
+                      </button>
+                    )}
+                  </div>
+                )}
+              </div>
+
               <div className="flex justify-between border-b border-gray-700 pb-2">
                 <dt className="text-gray-400">Created</dt>
                 <dd className="text-white">{new Date(asset.createdAt).toLocaleDateString()}</dd>
