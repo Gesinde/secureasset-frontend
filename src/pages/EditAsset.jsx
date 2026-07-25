@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { getAssetById, updateAsset } from '../services/assetService';
-import { DEPARTMENTS } from '../utils/departments';
+import { getDepartments } from '../services/departmentService';
 import Navbar from '../components/Navbar';
 
 function EditAsset() {
@@ -12,10 +12,13 @@ function EditAsset() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
 
+  const [departments, setDepartments] = useState([]);
+
   useEffect(() => {
     const fetchAsset = async () => {
       try {
         const data = await getAssetById(id);
+
         setFormData({
           name: data.name || '',
           category: data.category || '',
@@ -36,6 +39,10 @@ function EditAsset() {
     };
     fetchAsset();
   }, [id]);
+
+  useEffect(() => {
+    getDepartments().then(setDepartments).catch(() => {});
+  }, []);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -121,9 +128,9 @@ function EditAsset() {
               name="department" value={formData.department} onChange={handleChange} required
               className="w-full px-3 py-2 rounded bg-gray-700 text-white border border-gray-600 focus:outline-none focus:border-blue-500"
             >
-              {DEPARTMENTS.map((dept) => (
-                <option key={dept} value={dept}>{dept}</option>
-              ))}
+             {departments.map((dept) => (
+              <option key={dept._id} value={dept.name}>{dept.name}</option>
+            ))}
             </select>
           </div>
           <div>

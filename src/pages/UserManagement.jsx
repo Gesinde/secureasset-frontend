@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { getUsers, createUser, updateUser, setUserActiveStatus } from '../services/userService';
-import { DEPARTMENTS } from '../utils/departments';
+import { getDepartments } from '../services/departmentService';
 import Navbar from '../components/Navbar';
 
 const ROLES = [
@@ -16,6 +16,8 @@ function UserManagement() {
   const [formData, setFormData] = useState({ name: '', email: '', password: '', role: '', department: '' });
   const [editingId, setEditingId] = useState(null);
   const [editData, setEditData] = useState({ name: '', role: '', department: '' });
+
+  const [departments, setDepartments] = useState([]);
 
   const fetchUsers = useCallback(async () => {
     try {
@@ -33,6 +35,10 @@ function UserManagement() {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchUsers();
   }, [fetchUsers]);
+
+  useEffect(() => {
+    getDepartments().then(setDepartments).catch(() => {});
+  }, []);
 
   const handleCreate = async (e) => {
     e.preventDefault();
@@ -135,8 +141,8 @@ function UserManagement() {
                   className="w-full px-3 py-2 rounded bg-gray-700 text-white border border-gray-600 focus:outline-none focus:border-blue-500"
                 >
                   <option value="">Select department</option>
-                  {DEPARTMENTS.map((d) => (
-                    <option key={d} value={d}>{d}</option>
+                  {departments.map((d) => (
+                    <option key={d._id} value={d.name}>{d.name}</option>
                   ))}
                 </select>
               </div>
@@ -193,8 +199,8 @@ function UserManagement() {
                             onChange={(e) => setEditData({ ...editData, department: e.target.value })}
                             className="w-full px-2 py-1 rounded bg-gray-700 text-white text-xs border border-gray-600"
                           >
-                            {DEPARTMENTS.map((d) => (
-                              <option key={d} value={d}>{d}</option>
+                           {departments.map((d) => (
+                              <option key={d._id} value={d.name}>{d.name}</option>
                             ))}
                           </select>
                         </td>

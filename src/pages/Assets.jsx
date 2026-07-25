@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { getAssets, deleteAsset } from '../services/assetService';
 import { useAuth } from '../context/AuthContext';
 import Navbar from '../components/Navbar';
+import { exportToCSV } from '../utils/csvExport';
 
 function Assets() {
   const [assets, setAssets] = useState([]);
@@ -83,7 +84,14 @@ const [sortDirection, setSortDirection] = useState('asc');
       <Navbar />
       <div className="p-8">
         <div className="flex justify-between items-center mb-6">
-          <h1 className="text-2xl font-bold text-white">Assets</h1>
+        <h1 className="text-2xl font-bold text-white">Assets</h1>
+        <div className="flex gap-3">
+          <button
+            onClick={() => exportToCSV(filteredAssets, `assets-${new Date().toISOString().split('T')[0]}.csv`)}
+            className="bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded text-sm font-semibold"
+          >
+            Export CSV
+          </button>
           {canCreate && (
             <Link
               to="/assets/new"
@@ -93,6 +101,7 @@ const [sortDirection, setSortDirection] = useState('asc');
             </Link>
           )}
         </div>
+      </div>
 
         <div className="flex gap-3 mb-4">
           <input

@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { getTransfers, createTransfer, respondToTransfer } from '../services/transferService';
 import { getAssets } from '../services/assetService';
 import { getUsers } from '../services/userService';
-import { DEPARTMENTS } from '../utils/departments';
+import { getDepartments } from '../services/departmentService';
 import { useAuth } from '../context/AuthContext';
 import Navbar from '../components/Navbar';
 
@@ -32,6 +32,9 @@ function Transfers() {
   const [error, setError] = useState('');
   const [rejectingId, setRejectingId] = useState(null);
   const [rejectReason, setRejectReason] = useState('');
+
+  const [departments, setDepartments] = useState([]);
+  
   const { user } = useAuth();
 
   const canRequest = ['system_admin', 'department_head', 'department_staff'].includes(user?.role);
@@ -41,6 +44,7 @@ function Transfers() {
       const [transferData, assetData] = await Promise.all([getTransfers(), getAssets()]);
       setTransfers(transferData);
       setAssets(assetData);
+    // eslint-disable-next-line no-unused-vars
     } catch (err) {
       setError('Failed to load transfers.');
     } finally {
@@ -49,12 +53,13 @@ function Transfers() {
   };
 
   useEffect(() => {
-    fetchData();
+    getDepartments().then(setDepartments).catch(() => {});
   }, []);
 
   // When destination department changes, load that department's users as possible recipients
   useEffect(() => {
     if (!formData.toDepartment) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setRecipients([]);
       return;
     }
@@ -150,8 +155,8 @@ function Transfers() {
                 className="w-full px-3 py-2 rounded bg-gray-700 text-white border border-gray-600 focus:outline-none focus:border-blue-500"
               >
                 <option value="">Select department</option>
-                {DEPARTMENTS.map((d) => (
-                  <option key={d} value={d}>{d}</option>
+                {departments.map((d) => (
+                  <option key={d._id} value={d.name}>{d.name}</option>
                 ))}
               </select>
             </div>
