@@ -53,6 +53,11 @@ function Transfers() {
   };
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    fetchData();
+  }, []);
+
+  useEffect(() => {
     getDepartments().then(setDepartments).catch(() => {});
   }, []);
 
