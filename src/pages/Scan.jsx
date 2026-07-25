@@ -37,6 +37,7 @@ function Scan() {
   const [manualId, setManualId] = useState('');
   const [session, setSession] = useState(null);
   const [sessionLoading, setSessionLoading] = useState(true);
+  const [actionNotes, setActionNotes] = useState('');
   const { user } = useAuth();
   const navigate = useNavigate();
 
@@ -137,14 +138,15 @@ function Scan() {
   };
 
   const handleAction = async (action) => {
-    try {
-      await recordScanAction({ assetId: asset._id, action });
-      setActionMessage(`Recorded: ${ACTION_LABELS[action]}`);
-      if (session) loadSession();
-    } catch (err) {
-      setActionMessage(err.response?.data?.message || 'Failed to record action.');
-    }
-  };
+  try {
+    await recordScanAction({ assetId: asset._id, action, notes: actionNotes });
+    setActionMessage(`Recorded: ${ACTION_LABELS[action]}`);
+    setActionNotes('');
+    if (session) loadSession();
+  } catch (err) {
+    setActionMessage(err.response?.data?.message || 'Failed to record action.');
+  }
+};
 
   const scanAnother = () => {
     setAsset(null);
@@ -260,17 +262,26 @@ function Scan() {
             </dl>
 
             {allowedActions.length > 0 && !isCached && (
-              <div className="flex flex-wrap gap-2 mb-4">
-                {allowedActions.map((action) => (
-                  <button
-                    key={action}
-                    onClick={() => handleAction(action)}
-                    className="text-xs bg-gray-700 hover:bg-gray-600 text-white px-3 py-2 rounded"
-                  >
-                    {ACTION_LABELS[action]}
-                  </button>
-                ))}
-              </div>
+              <>
+                <input
+                  type="text"
+                  value={actionNotes}
+                  onChange={(e) => setActionNotes(e.target.value)}
+                  placeholder="Optional note (e.g. found in wrong room)"
+                  className="w-full px-3 py-2 rounded bg-gray-700 text-white text-xs border border-gray-600 focus:outline-none focus:border-blue-500 mb-2"
+                />
+                <div className="flex flex-wrap gap-2 mb-4">
+                  {allowedActions.map((action) => (
+                    <button
+                      key={action}
+                      onClick={() => handleAction(action)}
+                      className="text-xs bg-gray-700 hover:bg-gray-600 text-white px-3 py-2 rounded"
+                    >
+                      {ACTION_LABELS[action]}
+                    </button>
+                  ))}
+                </div>
+              </>
             )}
 
             {actionMessage && (

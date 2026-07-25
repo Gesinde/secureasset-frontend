@@ -1,5 +1,17 @@
 import { useState, useEffect, useCallback } from 'react';
 import { getNotifications, markAsRead } from '../services/notificationService';
+import { Link } from 'react-router-dom';
+
+const getNotificationLink = (n) => {
+  const routes = {
+    Asset: `/assets/${n.relatedId}`,
+    Transfer: '/transfers',
+    MaintenanceRequest: '/maintenance',
+    SecurityIncident: '/security',
+    Borrowing: '/dashboard', // Borrowing module was dropped from scope; safe fallback
+  };
+  return routes[n.relatedType] || '/dashboard';
+};
 
 function NotificationBell() {
   const [notifications, setNotifications] = useState([]);
@@ -54,15 +66,16 @@ function NotificationBell() {
             <p className="p-4 text-gray-500 text-sm">No notifications</p>
           ) : (
             notifications.map((n) => (
-              <button
-                key={n._id}
-                onClick={() => handleClick(n)}
-                className={`block w-full text-left p-3 border-b border-gray-700 text-xs hover:bg-gray-700 ${n.read ? 'text-gray-500' : 'text-white'}`}
-              >
-                <p>{n.message}</p>
-                <p className="text-gray-500 mt-1">{new Date(n.createdAt).toLocaleString()}</p>
-              </button>
-            ))
+            <Link
+              key={n._id}
+              to={getNotificationLink(n)}
+              onClick={() => { handleClick(n); setOpen(false); }}
+              className={`block w-full text-left p-3 border-b border-gray-700 text-xs hover:bg-gray-700 ${n.read ? 'text-gray-500' : 'text-white'}`}
+            >
+              <p>{n.message}</p>
+              <p className="text-gray-500 mt-1">{new Date(n.createdAt).toLocaleString()}</p>
+            </Link>
+          ))
           )}
         </div>
       )}

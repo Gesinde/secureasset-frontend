@@ -4,6 +4,11 @@ import { getAssetById } from '../services/assetService';
 import Navbar from '../components/Navbar';
 import { useAuth } from '../context/AuthContext';
 
+const daysSince = (dateString) => {
+  const diffMs = Date.now() - new Date(dateString).getTime();
+  return Math.floor(diffMs / (1000 * 60 * 60 * 24));
+};
+
 function AssetDetail() {
   const { id } = useParams();
   const [asset, setAsset] = useState(null);
@@ -89,9 +94,17 @@ function AssetDetail() {
                 <dt className="text-gray-400">Status</dt>
                 <dd className="text-white">{asset.status.replace('_', ' ')}</dd>
               </div>
-              <div className="flex justify-between">
+              <div className="flex justify-between border-b border-gray-700 pb-2">
                 <dt className="text-gray-400">Created</dt>
                 <dd className="text-white">{new Date(asset.createdAt).toLocaleDateString()}</dd>
+              </div>
+              <div className="flex justify-between">
+                <dt className="text-gray-400">Last Verified</dt>
+                <dd className={asset.lastVerifiedAt && daysSince(asset.lastVerifiedAt) > 90 ? 'text-yellow-400' : 'text-white'}>
+                  {asset.lastVerifiedAt
+                    ? `${new Date(asset.lastVerifiedAt).toLocaleDateString()} (${daysSince(asset.lastVerifiedAt)} days ago)`
+                    : 'Never verified'}
+                </dd>
               </div>
             </dl>
           </div>

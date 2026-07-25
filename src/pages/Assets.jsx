@@ -15,6 +15,9 @@ function Assets() {
   const canCreate = user?.role === 'system_admin';
   const canDelete = user?.role === 'system_admin';
 
+const [sortField, setSortField] = useState(null);
+const [sortDirection, setSortDirection] = useState('asc');
+
   const fetchAssets = useCallback(async () => {
     try {
       const data = await getAssets();
@@ -48,14 +51,32 @@ function Assets() {
     retired: 'bg-gray-500/20 text-gray-400',
   };
 
-  const filteredAssets = assets.filter((asset) => {
+ const filteredAssets = assets
+  .filter((asset) => {
     const matchesSearch =
       asset.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       asset.serialNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
       (asset.assetTag && asset.assetTag.toLowerCase().includes(searchTerm.toLowerCase()));
     const matchesStatus = !statusFilter || asset.status === statusFilter;
     return matchesSearch && matchesStatus;
+  })
+  .sort((a, b) => {
+    if (!sortField) return 0;
+    const aVal = (a[sortField] || '').toString().toLowerCase();
+    const bVal = (b[sortField] || '').toString().toLowerCase();
+    if (aVal < bVal) return sortDirection === 'asc' ? -1 : 1;
+    if (aVal > bVal) return sortDirection === 'asc' ? 1 : -1;
+    return 0;
   });
+
+  const handleSort = (field) => {
+  if (sortField === field) {
+    setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
+  } else {
+    setSortField(field);
+    setSortDirection('asc');
+  }
+};
 
   return (
     <div className="min-h-screen bg-gray-900">
@@ -104,13 +125,23 @@ function Assets() {
             <table className="w-full text-left">
               <thead className="bg-gray-700 text-gray-300 text-sm">
                 <tr>
-                  <th className="px-4 py-3">Name</th>
-                  <th className="px-4 py-3">Category</th>
-                  <th className="px-4 py-3">Department</th>
-                  <th className="px-4 py-3">Location</th>
-                  <th className="px-4 py-3">Status</th>
-                  <th className="px-4 py-3">Actions</th>
-                </tr>
+                <th className="px-4 py-3 cursor-pointer hover:text-white" onClick={() => handleSort('name')}>
+                  Name {sortField === 'name' && (sortDirection === 'asc' ? '↑' : '↓')}
+                </th>
+                <th className="px-4 py-3 cursor-pointer hover:text-white" onClick={() => handleSort('category')}>
+                  Category {sortField === 'category' && (sortDirection === 'asc' ? '↑' : '↓')}
+                </th>
+                <th className="px-4 py-3 cursor-pointer hover:text-white" onClick={() => handleSort('department')}>
+                  Department {sortField === 'department' && (sortDirection === 'asc' ? '↑' : '↓')}
+                </th>
+                <th className="px-4 py-3 cursor-pointer hover:text-white" onClick={() => handleSort('location')}>
+                  Location {sortField === 'location' && (sortDirection === 'asc' ? '↑' : '↓')}
+                </th>
+                <th className="px-4 py-3 cursor-pointer hover:text-white" onClick={() => handleSort('status')}>
+                  Status {sortField === 'status' && (sortDirection === 'asc' ? '↑' : '↓')}
+                </th>
+                <th className="px-4 py-3">Actions</th>
+              </tr>
               </thead>
               <tbody>
                 {filteredAssets.map((asset) => (
