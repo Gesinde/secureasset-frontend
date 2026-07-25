@@ -12,6 +12,7 @@ function AuditLog() {
       try {
         const data = await getAuditLogs();
         setLogs(data);
+      // eslint-disable-next-line no-unused-vars
       } catch (err) {
         setError('Failed to load audit logs.');
       } finally {
@@ -46,7 +47,7 @@ function AuditLog() {
         ) : logs.length === 0 ? (
           <p className="text-gray-400">No audit log entries found.</p>
         ) : (
-          <div className="bg-gray-800 rounded-lg overflow-hidden">
+          <div className="bg-gray-800 rounded-lg overflow-x-auto">
             <table className="w-full text-left">
               <thead className="bg-gray-700 text-gray-300 text-sm">
                 <tr>

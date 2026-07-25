@@ -157,7 +157,7 @@ function UserManagement() {
         {loading ? (
           <p className="text-gray-400">Loading...</p>
         ) : (
-          <div className="bg-gray-800 rounded-lg overflow-hidden">
+          <div className="bg-gray-800 rounded-lg overflow-x-auto">
             <table className="w-full text-left">
               <thead className="bg-gray-700 text-gray-300 text-sm">
                 <tr>
