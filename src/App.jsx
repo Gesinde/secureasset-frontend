@@ -83,7 +83,7 @@ function App() {
         <Route
           path="/audit"
           element={
-            <ProtectedRoute>
+            <ProtectedRoute allowedRoles={['system_admin', 'auditor']}>
               <AuditLog />
             </ProtectedRoute>
           }
@@ -104,19 +104,19 @@ function App() {
            </ProtectedRoute>
           }
         />
-        <Route
-          path="/users"
-          element={
-            <ProtectedRoute>
-              <UserManagement />
-            </ProtectedRoute>
-          }
-        />
+          <Route
+            path="/users"
+            element={
+              <ProtectedRoute allowedRoles={['system_admin']}>
+                <UserManagement />
+              </ProtectedRoute>
+            }
+          />
 
           <Route
             path="/admin"
             element={
-              <ProtectedRoute>
+              <ProtectedRoute allowedRoles={['system_admin']}>
                 <AdminDashboard />
               </ProtectedRoute>
             }
@@ -125,12 +125,11 @@ function App() {
           <Route
             path="/security-map"
             element={
-              <ProtectedRoute>
+              <ProtectedRoute allowedRoles={['system_admin', 'security_officer', 'auditor']}>
                 <SecurityMap />
               </ProtectedRoute>
             }
           />
-
         <Route path="/" element={<Navigate to="/dashboard" replace />} />
       </Routes>
 

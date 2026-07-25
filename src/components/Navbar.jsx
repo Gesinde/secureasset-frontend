@@ -1,72 +1,68 @@
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import NotificationBell from './NotificationBell';
+import ThemeToggle from './ThemeToggle';
 
 function Navbar() {
   const { user, logoutUser } = useAuth();
 
   if (!user) return null;
 
-
   const canViewAudit = ['system_admin', 'auditor'].includes(user.role);
   const canViewSecurity = ['system_admin', 'security_officer', 'auditor'].includes(user.role);
-  const canViewMaintenance = true; // all roles have some maintenance visibility
 
   return (
-    <nav className="bg-gray-800 border-b border-gray-700 px-6 py-3">
-      <div className="flex justify-between items-center">
-        <div className="flex items-center gap-6">
-          <Link to="/dashboard" className="text-white font-bold text-lg">
+    <nav className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-6 py-3">
+      <div className="flex justify-between items-center flex-wrap gap-3">
+        <div className="flex items-center gap-6 flex-wrap">
+          <Link to="/dashboard" className="text-gray-900 dark:text-white font-bold text-lg">
             SecureAsset
           </Link>
-          <Link to="/assets" className="text-gray-300 hover:text-white text-sm">
+          <Link to="/assets" className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white text-sm">
             Assets
           </Link>
-          <Link to="/scan" className="text-gray-300 hover:text-white text-sm">
-           Scan
+          <Link to="/scan" className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white text-sm">
+            Scan
           </Link>
-          {canViewMaintenance && (
-            <Link to="/maintenance" className="text-gray-300 hover:text-white text-sm">
-              Maintenance
-            </Link>
-          )}
+          <Link to="/maintenance" className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white text-sm">
+            Maintenance
+          </Link>
           {canViewSecurity && (
-            <Link to="/security" className="text-gray-300 hover:text-white text-sm">
+            <Link to="/security" className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white text-sm">
               Security
             </Link>
           )}
-
           {canViewSecurity && (
-          <Link to="/security-map" className="text-gray-300 hover:text-white text-sm">
-            Map
-          </Link>
-        )}
-
+            <Link to="/security-map" className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white text-sm">
+              Map
+            </Link>
+          )}
           {canViewAudit && (
-            <Link to="/audit" className="text-gray-300 hover:text-white text-sm">
+            <Link to="/audit" className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white text-sm">
               Audit Log
             </Link>
           )}
-          <Link to="/transfers" className="text-gray-300 hover:text-white text-sm">
+          <Link to="/transfers" className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white text-sm">
             Transfers
           </Link>
           {user.role === 'system_admin' && (
-          <Link to="/users" className="text-gray-300 hover:text-white text-sm">
-            Users
-          </Link>
-        )}
-        {user.role === 'system_admin' && (
-        <Link to="/admin" className="text-gray-300 hover:text-white text-sm">
-          Dashboard
-        </Link>
-      )}
+            <Link to="/users" className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white text-sm">
+              Users
+            </Link>
+          )}
+          {user.role === 'system_admin' && (
+            <Link to="/admin" className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white text-sm">
+              Dashboard
+            </Link>
+          )}
         </div>
 
         <div className="flex items-center gap-4">
-          <span className="text-gray-400 text-sm">
-            {user.name} <span className="text-gray-500">({user.role})</span>
-          </span>
+          <ThemeToggle />
           <NotificationBell />
+          <span className="text-gray-500 dark:text-gray-400 text-sm">
+            {user.name} <span className="text-gray-400 dark:text-gray-500">({user.role})</span>
+          </span>
           <button
             onClick={logoutUser}
             className="bg-red-600 hover:bg-red-700 text-white text-sm px-3 py-1.5 rounded transition"
@@ -80,4 +76,3 @@ function Navbar() {
 }
 
 export default Navbar;
-
