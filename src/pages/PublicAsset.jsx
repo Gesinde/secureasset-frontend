@@ -1,12 +1,15 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { getPublicAsset } from '../services/scanService';
+import { Link } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 
 function PublicAsset() {
   const { id } = useParams();
   const [asset, setAsset] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const { user } = useAuth();
 
  useEffect(() => {
   const fetchAsset = async () => {
@@ -80,10 +83,24 @@ function PublicAsset() {
           </div>
         </dl>
 
-        <p className="text-gray-500 text-xs text-center mt-6">
-          This is property of Crawford University. If found off-campus, please contact
-          campus security.
-        </p>
+        <div className="mt-6 pt-4 border-t border-gray-700">
+          <p className="text-yellow-400 text-xs font-semibold mb-1">⚠️ If You Found This Item</p>
+          <p className="text-gray-400 text-xs">
+            This item is the property of Crawford University. If it was found outside the university
+            premises, please return it to the nearest Crawford University security post, or hand it in
+            to the nearest police station. Do not attempt to keep or resell this item — it is tagged
+            and traceable to its registered department.
+          </p>
+        </div>
+
+        {user && (
+          <Link
+            to={`/verify/${id}`}
+            className="block text-center mt-4 text-blue-400 hover:underline text-xs"
+          >
+            Staff: View full verification details →
+          </Link>
+        )}
       </div>
     </div>
   );

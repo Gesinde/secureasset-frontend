@@ -96,6 +96,14 @@ function Verify() {
             View full asset details →
           </Link>
         )}
+
+        <Link
+          to={`/public/asset/${id}`}
+          className="block text-center mt-2 text-gray-500 hover:underline text-xs"
+        >
+          View public info & lost item instructions
+        </Link>
+
       </div>
     </div>
   );
