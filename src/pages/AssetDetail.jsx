@@ -5,6 +5,7 @@ import Navbar from '../components/Navbar';
 import { useAuth } from '../context/AuthContext';
 import { assignCustodian, acceptCustody } from '../services/assetService';
 import { getUsers } from '../services/userService';
+import { regenerateQR } from '../services/assetService';
 
 const daysSince = (dateString) => {
   const diffMs = Date.now() - new Date(dateString).getTime();
@@ -74,6 +75,16 @@ const handleAcceptCustody = async () => {
     setAsset(updated);
   } catch (err) {
     alert(err.response?.data?.message || 'Failed to accept custody.');
+  }
+};
+
+const handleRegenerateQR = async () => {
+  if (!window.confirm('Regenerate QR code? The old QR code will stop working immediately.')) return;
+  try {
+    const updated = await regenerateQR(asset._id);
+    setAsset(updated);
+  } catch {
+    alert('Failed to regenerate QR code.');
   }
 };
 
@@ -211,6 +222,14 @@ const isMyCustody = asset?.custodian?._id === user?.id;
               >
                 Download QR
               </button>
+              {user?.role === 'system_admin' && (
+                <button
+                  onClick={handleRegenerateQR}
+                  className="mt-2 text-red-600 hover:underline text-xs"
+                >
+                  Regenerate QR (invalidates old code)
+                </button>
+              )}
             </div>
           )}
         </div>

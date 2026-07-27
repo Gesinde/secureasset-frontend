@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { getAssetById } from '../services/assetService';
+import { getAssetByQrToken } from '../services/assetService';
 import { useAuth } from '../context/AuthContext';
 
 function Verify() {
@@ -11,18 +11,22 @@ function Verify() {
   const { user } = useAuth();
 
   useEffect(() => {
-    const fetchAsset = async () => {
-      try {
-        const data = await getAssetById(id);
-        setAsset(data);
-      } catch (err) {
+  const fetchAsset = async () => {
+    try {
+      const data = await getAssetByQrToken(id);
+      setAsset(data);
+    } catch (err) {
+      if (err.response?.status === 410) {
+        setError(err.response.data.message);
+      } else {
         setError('Asset not found or could not be verified.');
-      } finally {
-        setLoading(false);
       }
-    };
-    fetchAsset();
-  }, [id]);
+    } finally {
+      setLoading(false);
+    }
+  };
+  fetchAsset();
+}, [id]);
 
   const statusColor = {
     available: 'bg-green-500/20 text-green-400 border-green-500',

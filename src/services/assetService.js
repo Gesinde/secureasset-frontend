@@ -34,3 +34,13 @@ export const acceptCustody = async (id) => {
   const response = await api.put(`/assets/${id}/accept-custody`);
   return response.data;
 };
+
+export const getAssetByQrToken = async (token) => {
+  const response = await api.get(`/assets/qr-lookup/${token}`);
+  return response.data;
+};
+
+export const regenerateQR = async (id) => {
+  const response = await api.put(`/assets/${id}/regenerate-qr`);
+  return response.data;
+};
