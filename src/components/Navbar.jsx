@@ -25,6 +25,7 @@ function Navbar() {
     { to: '/users', label: 'Users', show: isAdmin },
     { to: '/departments', label: 'Departments', show: isAdmin },
     { to: '/admin', label: 'Dashboard', show: isAdmin },
+    { to: '/permissions', label: 'Permissions', show: isAdmin }
   ];
 
   return (

@@ -17,6 +17,7 @@ import UserManagement from './pages/UserManagement';
 import AdminDashboard from './pages/AdminDashboard';
 import SecurityMap from './pages/SecurityMap';
 import DepartmentManagement from './pages/DepartmentManagement';
+import PermissionsView from './pages/PermissionsView';
 
 function App() {
   return (
@@ -140,6 +141,16 @@ function App() {
               </ProtectedRoute>
             }
           />
+
+            <Route
+              path="/permissions"
+              element={
+                <ProtectedRoute allowedRoles={['system_admin']}>
+                  <PermissionsView />
+                </ProtectedRoute>
+              }
+            />
+
         <Route path="/" element={<Navigate to="/dashboard" replace />} />
       </Routes>
 
