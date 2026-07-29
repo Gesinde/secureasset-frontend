@@ -156,6 +156,8 @@ function UserManagement() {
         {error && <p className="text-red-400 mb-4">{error}</p>}
         {loading ? (
           <p className="text-gray-400">Loading...</p>
+          ) : users.length === 0 ? (
+            <p className="text-gray-400">No users found.</p>
         ) : (
           <div className="bg-gray-800 rounded-lg overflow-x-auto">
             <table className="w-full text-left">

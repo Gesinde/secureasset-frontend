@@ -25,8 +25,10 @@ function PermissionsView() {
         </p>
 
         {error && <p className="text-red-400 mb-4">{error}</p>}
-        {loading ? (
+       {loading ? (
           <p className="text-gray-400">Loading...</p>
+        ) : permissions.length === 0 ? (
+          <p className="text-gray-400">No permissions configured.</p>
         ) : (
           <div className="hidden md:block bg-gray-800 rounded-lg overflow-x-auto">
             <table className="w-full text-left">
