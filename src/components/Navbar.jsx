@@ -52,9 +52,12 @@ function Navbar() {
           <div className="hidden md:flex items-center gap-3">
             <ThemeToggle />
             <NotificationBell />
-            <span className="text-gray-500 dark:text-gray-400 text-sm">
+            <Link
+              to="/profile"
+              className="text-gray-500 dark:text-gray-400 text-sm hover:text-gray-900 dark:hover:text-white hover:underline"
+            >
               {user.name} <span className="text-gray-400 dark:text-gray-500">({user.role})</span>
-            </span>
+            </Link>
             <button
               onClick={logoutUser}
               className="bg-red-600 hover:bg-red-700 text-white text-sm px-3 py-1.5 rounded transition"
@@ -93,9 +96,12 @@ function Navbar() {
           <div className="flex items-center justify-between pt-3 border-t border-gray-200 dark:border-gray-700">
             <div className="flex items-center gap-3">
               <ThemeToggle />
-              <span className="text-gray-500 dark:text-gray-400 text-sm">
+              <Link
+                to="/profile"
+                className="text-gray-500 dark:text-gray-400 text-sm hover:text-gray-900 dark:hover:text-white hover:underline"
+              >
                 {user.name} <span className="text-gray-400 dark:text-gray-500">({user.role})</span>
-              </span>
+              </Link>
             </div>
             <button
               onClick={logoutUser}

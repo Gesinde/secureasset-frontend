@@ -18,6 +18,7 @@ import AdminDashboard from './pages/AdminDashboard';
 import SecurityMap from './pages/SecurityMap';
 import DepartmentManagement from './pages/DepartmentManagement';
 import PermissionsView from './pages/PermissionsView';
+import Profile from './pages/Profile';
 
 function App() {
   return (
@@ -150,6 +151,15 @@ function App() {
                 </ProtectedRoute>
               }
             />
+
+              <Route
+                path="/profile"
+                element={
+                  <ProtectedRoute>
+                    <Profile />
+                  </ProtectedRoute>
+                }
+              />
 
         <Route path="/" element={<Navigate to="/dashboard" replace />} />
       </Routes>
