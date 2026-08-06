@@ -55,10 +55,10 @@ function Assets() {
   };
 
   const statusColor = {
-    available: 'bg-green-500/20 text-green-400',
-    in_use: 'bg-blue-500/20 text-blue-400',
-    under_maintenance: 'bg-yellow-500/20 text-yellow-400',
-    retired: 'bg-gray-500/20 text-gray-400',
+    available: 'bg-green-500/20 text-green-600 dark:text-green-400',
+    in_use: 'bg-blue-500/20 text-blue-600 dark:text-blue-400',
+    under_maintenance: 'bg-yellow-500/20 text-yellow-600 dark:text-yellow-400',
+    retired: 'bg-gray-500/20 text-gray-600 dark:text-gray-400',
   };
 
   const filteredAssets = assets
@@ -80,15 +80,15 @@ function Assets() {
     });
 
   return (
-    <div className="min-h-screen bg-gray-900">
+    <div className="min-h-screen bg-gray-100 dark:bg-gray-900">
       <Navbar />
       <div className="p-8">
         <div className="flex justify-between items-center mb-6 flex-wrap gap-3">
-          <h1 className="text-2xl font-bold text-white">Assets</h1>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Assets</h1>
           <div className="flex gap-3">
             <button
               onClick={() => exportToCSV(filteredAssets, `assets-${new Date().toISOString().split('T')[0]}.csv`)}
-              className="bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded text-sm font-semibold"
+              className="bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-900 dark:text-white px-4 py-2 rounded text-sm font-semibold"
             >
               Export CSV
             </button>
@@ -109,12 +109,12 @@ function Assets() {
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             placeholder="Search by name, serial number, or asset tag..."
-            className="flex-1 min-w-[200px] px-3 py-2 rounded bg-gray-800 text-white text-sm border border-gray-700 focus:outline-none focus:border-blue-500"
+            className="flex-1 min-w-[200px] px-3 py-2 rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-white text-sm border border-gray-300 dark:border-gray-700 focus:outline-none focus:border-blue-500"
           />
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="px-3 py-2 rounded bg-gray-800 text-white text-sm border border-gray-700 focus:outline-none focus:border-blue-500"
+            className="px-3 py-2 rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-white text-sm border border-gray-300 dark:border-gray-700 focus:outline-none focus:border-blue-500"
           >
             <option value="">All statuses</option>
             <option value="available">Available</option>
@@ -124,31 +124,30 @@ function Assets() {
           </select>
         </div>
 
-        {error && <p className="text-red-400 mb-4">{error}</p>}
+        {error && <p className="text-red-500 dark:text-red-400 mb-4">{error}</p>}
         {loading ? (
-          <p className="text-gray-400">Loading assets...</p>
+          <p className="text-gray-500 dark:text-gray-400">Loading assets...</p>
         ) : filteredAssets.length === 0 ? (
-          <p className="text-gray-400">No assets found.</p>
+          <p className="text-gray-500 dark:text-gray-400">No assets found.</p>
         ) : (
           <>
-            {/* Desktop table - hidden on narrow screens */}
-            <div className="hidden md:block bg-gray-800 rounded-lg overflow-x-auto">
+            <div className="hidden md:block bg-white dark:bg-gray-800 rounded-lg overflow-x-auto">
               <table className="w-full text-left">
-                <thead className="bg-gray-700 text-gray-300 text-sm">
+                <thead className="bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 text-sm">
                   <tr>
-                    <th className="px-4 py-3 cursor-pointer hover:text-white" onClick={() => handleSort('name')}>
+                    <th className="px-4 py-3 cursor-pointer hover:text-gray-900 dark:hover:text-white" onClick={() => handleSort('name')}>
                       Name {sortField === 'name' && (sortDirection === 'asc' ? '↑' : '↓')}
                     </th>
-                    <th className="px-4 py-3 cursor-pointer hover:text-white" onClick={() => handleSort('category')}>
+                    <th className="px-4 py-3 cursor-pointer hover:text-gray-900 dark:hover:text-white" onClick={() => handleSort('category')}>
                       Category {sortField === 'category' && (sortDirection === 'asc' ? '↑' : '↓')}
                     </th>
-                    <th className="px-4 py-3 cursor-pointer hover:text-white" onClick={() => handleSort('department')}>
+                    <th className="px-4 py-3 cursor-pointer hover:text-gray-900 dark:hover:text-white" onClick={() => handleSort('department')}>
                       Department {sortField === 'department' && (sortDirection === 'asc' ? '↑' : '↓')}
                     </th>
-                    <th className="px-4 py-3 cursor-pointer hover:text-white" onClick={() => handleSort('location')}>
+                    <th className="px-4 py-3 cursor-pointer hover:text-gray-900 dark:hover:text-white" onClick={() => handleSort('location')}>
                       Location {sortField === 'location' && (sortDirection === 'asc' ? '↑' : '↓')}
                     </th>
-                    <th className="px-4 py-3 cursor-pointer hover:text-white" onClick={() => handleSort('status')}>
+                    <th className="px-4 py-3 cursor-pointer hover:text-gray-900 dark:hover:text-white" onClick={() => handleSort('status')}>
                       Status {sortField === 'status' && (sortDirection === 'asc' ? '↑' : '↓')}
                     </th>
                     <th className="px-4 py-3">Actions</th>
@@ -156,7 +155,7 @@ function Assets() {
                 </thead>
                 <tbody>
                   {filteredAssets.map((asset) => (
-                    <tr key={asset._id} className="border-t border-gray-700 text-gray-200 text-sm">
+                    <tr key={asset._id} className="border-t border-gray-200 dark:border-gray-700 text-gray-800 dark:text-gray-200 text-sm">
                       <td className="px-4 py-3">{asset.name}</td>
                       <td className="px-4 py-3">{asset.category}</td>
                       <td className="px-4 py-3">{asset.department}</td>
@@ -167,11 +166,11 @@ function Assets() {
                         </span>
                       </td>
                       <td className="px-4 py-3 space-x-3">
-                        <Link to={`/assets/${asset._id}`} className="text-blue-400 hover:underline">
+                        <Link to={`/assets/${asset._id}`} className="text-blue-600 dark:text-blue-400 hover:underline">
                           View
                         </Link>
                         {canDelete && (
-                          <button onClick={() => handleDelete(asset._id)} className="text-red-400 hover:underline">
+                          <button onClick={() => handleDelete(asset._id)} className="text-red-600 dark:text-red-400 hover:underline">
                             Delete
                           </button>
                         )}
@@ -182,24 +181,23 @@ function Assets() {
               </table>
             </div>
 
-            {/* Mobile cards - hidden on desktop */}
             <div className="md:hidden space-y-3">
               {filteredAssets.map((asset) => (
-                <div key={asset._id} className="bg-gray-800 rounded-lg p-4">
+                <div key={asset._id} className="bg-white dark:bg-gray-800 rounded-lg p-4">
                   <div className="flex justify-between items-start mb-2">
-                    <p className="text-white font-semibold text-sm">{asset.name}</p>
+                    <p className="text-gray-900 dark:text-white font-semibold text-sm">{asset.name}</p>
                     <span className={`px-2 py-1 rounded text-xs whitespace-nowrap ${statusColor[asset.status]}`}>
                       {asset.status.replace('_', ' ')}
                     </span>
                   </div>
-                  <p className="text-gray-400 text-xs mb-1">{asset.category}</p>
-                  <p className="text-gray-400 text-xs mb-1">{asset.department} · {asset.location}</p>
+                  <p className="text-gray-500 dark:text-gray-400 text-xs mb-1">{asset.category}</p>
+                  <p className="text-gray-500 dark:text-gray-400 text-xs mb-1">{asset.department} · {asset.location}</p>
                   <div className="flex gap-4 mt-3">
-                    <Link to={`/assets/${asset._id}`} className="text-blue-400 text-xs">
+                    <Link to={`/assets/${asset._id}`} className="text-blue-600 dark:text-blue-400 text-xs">
                       View
                     </Link>
                     {canDelete && (
-                      <button onClick={() => handleDelete(asset._id)} className="text-red-400 text-xs">
+                      <button onClick={() => handleDelete(asset._id)} className="text-red-600 dark:text-red-400 text-xs">
                         Delete
                       </button>
                     )}

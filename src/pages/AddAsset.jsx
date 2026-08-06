@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { createAsset } from '../services/assetService';
-import Navbar from '../components/Navbar';
 import { getDepartments } from '../services/departmentService';
+import Navbar from '../components/Navbar';
 
 function AddAsset() {
   const [formData, setFormData] = useState({
@@ -13,15 +13,14 @@ function AddAsset() {
     location: '',
     status: 'available',
   });
+  const [departments, setDepartments] = useState([]);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  const [departments, setDepartments] = useState([]);
-
   useEffect(() => {
-  getDepartments().then(setDepartments).catch(() => {});
-}, []);
+    getDepartments().then(setDepartments).catch(() => {});
+  }, []);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -42,65 +41,65 @@ function AddAsset() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-900">
+    <div className="min-h-screen bg-gray-100 dark:bg-gray-900">
       <Navbar />
       <div className="p-8 max-w-2xl mx-auto">
-        <h1 className="text-2xl font-bold text-white mb-6">Add New Asset</h1>
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">Add New Asset</h1>
 
         {error && (
-          <div className="bg-red-500/10 border border-red-500 text-red-400 text-sm p-3 rounded mb-4">
+          <div className="bg-red-500/10 border border-red-500 text-red-600 dark:text-red-400 text-sm p-3 rounded mb-4">
             {error}
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="bg-gray-800 p-6 rounded-lg space-y-4">
+        <form onSubmit={handleSubmit} className="bg-white dark:bg-gray-800 p-6 rounded-lg space-y-4">
           <div>
-            <label className="block text-gray-300 text-sm mb-1">Asset Name</label>
+            <label className="block text-gray-600 dark:text-gray-300 text-sm mb-1">Asset Name</label>
             <input
               type="text"
               name="name"
               value={formData.name}
               onChange={handleChange}
               required
-              className="w-full px-3 py-2 rounded bg-gray-700 text-white border border-gray-600 focus:outline-none focus:border-blue-500"
+              className="w-full px-3 py-2 rounded bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white border border-gray-300 dark:border-gray-600 focus:outline-none focus:border-blue-500"
               placeholder="e.g. HP LaserJet Printer"
             />
           </div>
 
           <div>
-            <label className="block text-gray-300 text-sm mb-1">Category</label>
+            <label className="block text-gray-600 dark:text-gray-300 text-sm mb-1">Category</label>
             <input
               type="text"
               name="category"
               value={formData.category}
               onChange={handleChange}
               required
-              className="w-full px-3 py-2 rounded bg-gray-700 text-white border border-gray-600 focus:outline-none focus:border-blue-500"
+              className="w-full px-3 py-2 rounded bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white border border-gray-300 dark:border-gray-600 focus:outline-none focus:border-blue-500"
               placeholder="e.g. Electronics, Furniture"
             />
           </div>
 
           <div>
-            <label className="block text-gray-300 text-sm mb-1">Serial Number</label>
+            <label className="block text-gray-600 dark:text-gray-300 text-sm mb-1">Serial Number</label>
             <input
               type="text"
               name="serialNumber"
               value={formData.serialNumber}
               onChange={handleChange}
               required
-              className="w-full px-3 py-2 rounded bg-gray-700 text-white border border-gray-600 focus:outline-none focus:border-blue-500"
+              className="w-full px-3 py-2 rounded bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white border border-gray-300 dark:border-gray-600 focus:outline-none focus:border-blue-500"
               placeholder="e.g. HP-2024-001"
             />
           </div>
 
           <div>
-            <label className="block text-gray-300 text-sm mb-1">Department</label>
+            <label className="block text-gray-600 dark:text-gray-300 text-sm mb-1">Department</label>
             <select
               name="department"
               value={formData.department}
               onChange={handleChange}
               required
-              className="w-full px-3 py-2 rounded bg-gray-700 text-white border border-gray-600 focus:outline-none focus:border-blue-500"
+              className="w-full px-3 py-2 rounded bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white border border-gray-300 dark:border-gray-600 focus:outline-none focus:border-blue-500"
             >
               <option value="">Select department</option>
               {departments.map((dept) => (
@@ -110,25 +109,25 @@ function AddAsset() {
           </div>
 
           <div>
-            <label className="block text-gray-300 text-sm mb-1">Location</label>
+            <label className="block text-gray-600 dark:text-gray-300 text-sm mb-1">Location</label>
             <input
               type="text"
               name="location"
               value={formData.location}
               onChange={handleChange}
               required
-              className="w-full px-3 py-2 rounded bg-gray-700 text-white border border-gray-600 focus:outline-none focus:border-blue-500"
+              className="w-full px-3 py-2 rounded bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white border border-gray-300 dark:border-gray-600 focus:outline-none focus:border-blue-500"
               placeholder="e.g. CS Lab 1"
             />
           </div>
 
           <div>
-            <label className="block text-gray-300 text-sm mb-1">Status</label>
+            <label className="block text-gray-600 dark:text-gray-300 text-sm mb-1">Status</label>
             <select
               name="status"
               value={formData.status}
               onChange={handleChange}
-              className="w-full px-3 py-2 rounded bg-gray-700 text-white border border-gray-600 focus:outline-none focus:border-blue-500"
+              className="w-full px-3 py-2 rounded bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white border border-gray-300 dark:border-gray-600 focus:outline-none focus:border-blue-500"
             >
               <option value="available">Available</option>
               <option value="in_use">In Use</option>

@@ -1,5 +1,10 @@
 import { useState, useEffect, useCallback } from 'react';
-import { getDepartments, createDepartment, updateDepartment, setDepartmentActiveStatus } from '../services/departmentService';
+import {
+  getDepartments,
+  createDepartment,
+  updateDepartment,
+  setDepartmentActiveStatus,
+} from '../services/departmentService';
 import Navbar from '../components/Navbar';
 
 function DepartmentManagement() {
@@ -12,7 +17,7 @@ function DepartmentManagement() {
 
   const fetchDepartments = useCallback(async () => {
     try {
-      const data = await getDepartments(true); // includeInactive, so admins see deactivated ones too
+      const data = await getDepartments(true);
       setDepartments(data);
     } catch {
       setError('Failed to load departments.');
@@ -28,6 +33,7 @@ function DepartmentManagement() {
 
   const handleCreate = async (e) => {
     e.preventDefault();
+
     try {
       await createDepartment(newName);
       setNewName('');
@@ -54,9 +60,17 @@ function DepartmentManagement() {
 
   const handleToggleActive = async (dept) => {
     const action = dept.isActive === false ? 'reactivate' : 'deactivate';
-    if (!window.confirm(`Are you sure you want to ${action} "${dept.name}"?`)) return;
+
+    if (!window.confirm(`Are you sure you want to ${action} "${dept.name}"?`)) {
+      return;
+    }
+
     try {
-      await setDepartmentActiveStatus(dept._id, dept.isActive === false ? true : false);
+      await setDepartmentActiveStatus(
+        dept._id,
+        dept.isActive === false ? true : false
+      );
+
       fetchDepartments();
     } catch {
       alert(`Failed to ${action} department.`);
@@ -64,80 +78,149 @@ function DepartmentManagement() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-900">
+    <div className="min-h-screen bg-gray-100 dark:bg-gray-900">
       <Navbar />
-      <div className="p-8 max-w-2xl mx-auto">
-        <h1 className="text-2xl font-bold text-white mb-6">Department Management</h1>
 
-        <form onSubmit={handleCreate} className="bg-gray-800 p-6 rounded-lg mb-6 flex gap-3">
+      <div className="p-8 max-w-2xl mx-auto">
+
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
+          Department Management
+        </h1>
+
+        <form
+          onSubmit={handleCreate}
+          className="bg-white dark:bg-gray-800 shadow dark:shadow-none p-6 rounded-lg mb-6 flex gap-3"
+        >
           <input
             type="text"
             value={newName}
             onChange={(e) => setNewName(e.target.value)}
             required
             placeholder="New department name"
-            className="flex-1 px-3 py-2 rounded bg-gray-700 text-white border border-gray-600 focus:outline-none focus:border-blue-500"
+            className="flex-1 px-3 py-2 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-white border border-gray-300 dark:border-gray-600 focus:outline-none focus:border-blue-500"
           />
-          <button type="submit" className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded text-sm font-semibold">
+
+          <button
+            type="submit"
+            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded text-sm font-semibold"
+          >
             Add
           </button>
         </form>
 
-        {error && <p className="text-red-400 mb-4">{error}</p>}
+        {error && (
+          <p className="text-red-600 dark:text-red-400 mb-4">
+            {error}
+          </p>
+        )}
+
         {loading ? (
-          <p className="text-gray-400">Loading...</p>
+          <p className="text-gray-500 dark:text-gray-400">
+            Loading...
+          </p>
         ) : departments.length === 0 ? (
-          <p className="text-gray-400">No departments found.</p>
+          <p className="text-gray-500 dark:text-gray-400">
+            No departments found.
+          </p>
         ) : (
-          <div className="bg-gray-800 rounded-lg overflow-x-auto">
+          <div className="bg-white dark:bg-gray-800 shadow dark:shadow-none rounded-lg overflow-x-auto">
+
             <table className="w-full text-left">
-              <thead className="bg-gray-700 text-gray-300 text-sm">
+
+              <thead className="bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 text-sm">
                 <tr>
                   <th className="px-4 py-3">Name</th>
                   <th className="px-4 py-3">Status</th>
                   <th className="px-4 py-3">Actions</th>
                 </tr>
               </thead>
+
               <tbody>
                 {departments.map((dept) => (
-                  <tr key={dept._id} className="border-t border-gray-700 text-gray-200 text-sm">
+                  <tr
+                    key={dept._id}
+                    className="border-t border-gray-200 dark:border-gray-700 text-gray-800 dark:text-gray-200 text-sm"
+                  >
+
                     {editingId === dept._id ? (
                       <>
                         <td className="px-4 py-2">
                           <input
                             value={editName}
                             onChange={(e) => setEditName(e.target.value)}
-                            className="w-full px-2 py-1 rounded bg-gray-700 text-white text-xs border border-gray-600"
+                            className="w-full px-2 py-1 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-xs border border-gray-300 dark:border-gray-600"
                           />
                         </td>
+
                         <td className="px-4 py-2">—</td>
+
                         <td className="px-4 py-2 space-x-2">
-                          <button onClick={() => handleSaveEdit(dept._id)} className="text-green-400 hover:underline text-xs">Save</button>
-                          <button onClick={() => setEditingId(null)} className="text-gray-400 hover:underline text-xs">Cancel</button>
+                          <button
+                            onClick={() => handleSaveEdit(dept._id)}
+                            className="text-green-600 dark:text-green-400 hover:underline text-xs"
+                          >
+                            Save
+                          </button>
+
+                          <button
+                            onClick={() => setEditingId(null)}
+                            className="text-gray-500 dark:text-gray-400 hover:underline text-xs"
+                          >
+                            Cancel
+                          </button>
                         </td>
                       </>
                     ) : (
                       <>
-                        <td className="px-4 py-3">{dept.name}</td>
                         <td className="px-4 py-3">
-                          <span className={`px-2 py-1 rounded text-xs ${dept.isActive === false ? 'bg-red-500/20 text-red-400' : 'bg-green-500/20 text-green-400'}`}>
-                            {dept.isActive === false ? 'Deactivated' : 'Active'}
+                          {dept.name}
+                        </td>
+
+                        <td className="px-4 py-3">
+                          <span
+                            className={`px-2 py-1 rounded text-xs ${
+                              dept.isActive === false
+                                ? 'bg-red-500/20 text-red-600 dark:text-red-400'
+                                : 'bg-green-500/20 text-green-600 dark:text-green-400'
+                            }`}
+                          >
+                            {dept.isActive === false
+                              ? 'Deactivated'
+                              : 'Active'}
                           </span>
                         </td>
+
                         <td className="px-4 py-3 space-x-3">
-                          <button onClick={() => startEditing(dept)} className="text-blue-400 hover:underline text-xs">Rename</button>
-                          <button onClick={() => handleToggleActive(dept)} className="text-yellow-400 hover:underline text-xs">
-                            {dept.isActive === false ? 'Reactivate' : 'Deactivate'}
+
+                          <button
+                            onClick={() => startEditing(dept)}
+                            className="text-blue-600 dark:text-blue-400 hover:underline text-xs"
+                          >
+                            Rename
                           </button>
+
+                          <button
+                            onClick={() => handleToggleActive(dept)}
+                            className="text-yellow-600 dark:text-yellow-400 hover:underline text-xs"
+                          >
+                            {dept.isActive === false
+                              ? 'Reactivate'
+                              : 'Deactivate'}
+                          </button>
+
                         </td>
                       </>
                     )}
+
                   </tr>
                 ))}
               </tbody>
+
             </table>
+
           </div>
         )}
+
       </div>
     </div>
   );

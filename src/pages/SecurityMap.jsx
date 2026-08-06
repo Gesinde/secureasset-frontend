@@ -13,15 +13,22 @@ L.Icon.Default.mergeOptions({
   shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
 });
 
-// Matches backend/config/campusBoundary.js - if you update that file with real
-// coordinates, update these four numbers to match
-const BOUNDARY = { NORTH: 6.5339, SOUTH: 6.5239, EAST: 3.1408, WEST: 3.1308 };
-const CENTER = [(BOUNDARY.NORTH + BOUNDARY.SOUTH) / 2, (BOUNDARY.EAST + BOUNDARY.WEST) / 2];
+const BOUNDARY = {
+  NORTH: 6.5339,
+  SOUTH: 6.5239,
+  EAST: 3.1408,
+  WEST: 3.1308,
+};
+
+const CENTER = [
+  (BOUNDARY.NORTH + BOUNDARY.SOUTH) / 2,
+  (BOUNDARY.EAST + BOUNDARY.WEST) / 2,
+];
 
 const INCIDENT_STATUS_COLOR = {
-  open: 'text-red-400',
-  investigating: 'text-yellow-400',
-  resolved: 'text-green-400',
+  open: 'text-red-500 dark:text-red-400',
+  investigating: 'text-yellow-600 dark:text-yellow-400',
+  resolved: 'text-green-600 dark:text-green-400',
 };
 
 function SecurityMap() {
@@ -33,7 +40,11 @@ function SecurityMap() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [pointData, incidentData] = await Promise.all([getScanMapPoints(), getIncidents()]);
+        const [pointData, incidentData] = await Promise.all([
+          getScanMapPoints(),
+          getIncidents(),
+        ]);
+
         setPoints(pointData);
         setIncidents(incidentData);
       } catch {
@@ -42,38 +53,79 @@ function SecurityMap() {
         setLoading(false);
       }
     };
+
     fetchData();
   }, []);
 
   return (
-    <div className="min-h-screen bg-gray-900">
+    <div className="min-h-screen bg-gray-100 dark:bg-gray-900">
       <Navbar />
-      <div className="p-8">
-        <h1 className="text-2xl font-bold text-white mb-6">Security Map</h1>
 
-        {error && <p className="text-red-400 mb-4">{error}</p>}
+      <div className="p-8">
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
+          Security Map
+        </h1>
+
+        {error && (
+          <p className="text-red-500 dark:text-red-400 mb-4">
+            {error}
+          </p>
+        )}
+
         {loading ? (
-          <p className="text-gray-400">Loading map...</p>
+          <p className="text-gray-500 dark:text-gray-400">
+            Loading map...
+          </p>
         ) : (
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <div className="lg:col-span-2 bg-gray-800 rounded-lg overflow-hidden" style={{ height: '500px' }}>
-              <MapContainer center={CENTER} zoom={15} style={{ height: '100%', width: '100%' }}>
+
+            <div
+              className="lg:col-span-2 bg-white dark:bg-gray-800 rounded-lg overflow-hidden"
+              style={{ height: '500px' }}
+            >
+              <MapContainer
+                center={CENTER}
+                zoom={15}
+                style={{ height: '100%', width: '100%' }}
+              >
                 <TileLayer
-                  attribution='&copy; OpenStreetMap contributors'
+                  attribution="&copy; OpenStreetMap contributors"
                   url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                 />
+
                 <Rectangle
-                  bounds={[[BOUNDARY.SOUTH, BOUNDARY.WEST], [BOUNDARY.NORTH, BOUNDARY.EAST]]}
-                  pathOptions={{ color: '#3b82f6', weight: 2, fillOpacity: 0.05 }}
+                  bounds={[
+                    [BOUNDARY.SOUTH, BOUNDARY.WEST],
+                    [BOUNDARY.NORTH, BOUNDARY.EAST],
+                  ]}
+                  pathOptions={{
+                    color: '#3b82f6',
+                    weight: 2,
+                    fillOpacity: 0.05,
+                  }}
                 />
+
                 {points.map((p) => (
                   <Marker key={p._id} position={[p.gpsLat, p.gpsLng]}>
                     <Popup>
                       <div className="text-sm">
-                        <p className="font-semibold">{p.asset?.name}</p>
-                        <p>{p.isOffCampus ? '⚠️ Off-campus scan' : 'On-campus scan'}</p>
-                        <p className="text-gray-500">{p.scannedBy?.name || 'Anonymous'}</p>
-                        <p className="text-gray-500 text-xs">{new Date(p.timestamp).toLocaleString()}</p>
+                        <p className="font-semibold">
+                          {p.asset?.name}
+                        </p>
+
+                        <p>
+                          {p.isOffCampus
+                            ? '⚠️ Off-campus scan'
+                            : 'On-campus scan'}
+                        </p>
+
+                        <p className="text-gray-500">
+                          {p.scannedBy?.name || 'Anonymous'}
+                        </p>
+
+                        <p className="text-gray-500 text-xs">
+                          {new Date(p.timestamp).toLocaleString()}
+                        </p>
                       </div>
                     </Popup>
                   </Marker>
@@ -81,38 +133,73 @@ function SecurityMap() {
               </MapContainer>
             </div>
 
-            <div className="bg-gray-800 rounded-lg p-4 max-h-[500px] overflow-y-auto">
-              <h3 className="text-gray-300 text-sm font-semibold mb-3">
+
+            <div className="bg-white dark:bg-gray-800 rounded-lg p-4 max-h-[500px] overflow-y-auto">
+
+              <h3 className="text-gray-700 dark:text-gray-300 text-sm font-semibold mb-3">
                 Security Incidents ({incidents.length})
               </h3>
+
               {incidents.length === 0 ? (
-                <p className="text-gray-500 text-sm">No incidents reported.</p>
+                <p className="text-gray-500 text-sm">
+                  No incidents reported.
+                </p>
               ) : (
+
                 <div className="space-y-3">
+
                   {incidents.map((inc) => (
-                    <div key={inc._id} className="border-b border-gray-700 pb-3">
+
+                    <div
+                      key={inc._id}
+                      className="border-b border-gray-200 dark:border-gray-700 pb-3"
+                    >
+
                       <div className="flex justify-between items-start">
-                        <p className="text-white text-sm font-medium">
+
+                        <p className="text-gray-900 dark:text-white text-sm font-medium">
                           {inc.asset?.name || 'General incident'}
                         </p>
-                        <span className={`text-xs ${INCIDENT_STATUS_COLOR[inc.status]}`}>
+
+                        <span
+                          className={`text-xs ${INCIDENT_STATUS_COLOR[inc.status]}`}
+                        >
                           {inc.status}
                         </span>
+
                       </div>
-                      <p className="text-gray-400 text-xs mt-1">{inc.location}</p>
-                      <p className="text-gray-500 text-xs mt-1">{inc.description}</p>
+
+                      <p className="text-gray-500 dark:text-gray-400 text-xs mt-1">
+                        {inc.location}
+                      </p>
+
+                      <p className="text-gray-500 text-xs mt-1">
+                        {inc.description}
+                      </p>
+
                     </div>
+
                   ))}
+
                 </div>
+
               )}
+
             </div>
+
           </div>
         )}
 
-        <div className="mt-4 flex gap-4 text-xs text-gray-500">
-          <span>📍 {points.filter((p) => !p.isOffCampus).length} on-campus scans</span>
-          <span>⚠️ {points.filter((p) => p.isOffCampus).length} off-campus scans</span>
+        <div className="mt-4 flex gap-4 text-xs text-gray-500 dark:text-gray-400">
+          <span>
+            📍 {points.filter((p) => !p.isOffCampus).length} on-campus scans
+          </span>
+
+          <span>
+            ⚠️ {points.filter((p) => p.isOffCampus).length} off-campus scans
+          </span>
         </div>
+
       </div>
     </div>
   );

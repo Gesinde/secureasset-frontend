@@ -11,14 +11,12 @@ function EditAsset() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-
   const [departments, setDepartments] = useState([]);
 
   useEffect(() => {
     const fetchAsset = async () => {
       try {
         const data = await getAssetById(id);
-
         setFormData({
           name: data.name || '',
           category: data.category || '',
@@ -64,88 +62,88 @@ function EditAsset() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-900">
+      <div className="min-h-screen bg-gray-100 dark:bg-gray-900">
         <Navbar />
-        <p className="text-gray-400 p-8">Loading...</p>
+        <p className="text-gray-500 dark:text-gray-400 p-8">Loading...</p>
       </div>
     );
   }
 
   if (!formData) {
     return (
-      <div className="min-h-screen bg-gray-900">
+      <div className="min-h-screen bg-gray-100 dark:bg-gray-900">
         <Navbar />
-        <p className="text-red-400 p-8">{error || 'Asset not found.'}</p>
+        <p className="text-red-500 dark:text-red-400 p-8">{error || 'Asset not found.'}</p>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-900">
+    <div className="min-h-screen bg-gray-100 dark:bg-gray-900">
       <Navbar />
       <div className="p-8 max-w-2xl mx-auto">
-        <h1 className="text-2xl font-bold text-white mb-6">Edit Asset</h1>
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">Edit Asset</h1>
 
         {error && (
-          <div className="bg-red-500/10 border border-red-500 text-red-400 text-sm p-3 rounded mb-4">
+          <div className="bg-red-500/10 border border-red-500 text-red-600 dark:text-red-400 text-sm p-3 rounded mb-4">
             {error}
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="bg-gray-800 p-6 rounded-lg space-y-4">
+        <form onSubmit={handleSubmit} className="bg-white dark:bg-gray-800 p-6 rounded-lg space-y-4">
           <div>
-            <label className="block text-gray-300 text-sm mb-1">Asset Name</label>
+            <label className="block text-gray-600 dark:text-gray-300 text-sm mb-1">Asset Name</label>
             <input
               type="text" name="name" value={formData.name} onChange={handleChange} required
-              className="w-full px-3 py-2 rounded bg-gray-700 text-white border border-gray-600 focus:outline-none focus:border-blue-500"
+              className="w-full px-3 py-2 rounded bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white border border-gray-300 dark:border-gray-600 focus:outline-none focus:border-blue-500"
             />
           </div>
           <div>
-            <label className="block text-gray-300 text-sm mb-1">Category</label>
+            <label className="block text-gray-600 dark:text-gray-300 text-sm mb-1">Category</label>
             <input
               type="text" name="category" value={formData.category} onChange={handleChange} required
-              className="w-full px-3 py-2 rounded bg-gray-700 text-white border border-gray-600 focus:outline-none focus:border-blue-500"
+              className="w-full px-3 py-2 rounded bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white border border-gray-300 dark:border-gray-600 focus:outline-none focus:border-blue-500"
             />
           </div>
           <div>
-            <label className="block text-gray-300 text-sm mb-1">Serial Number</label>
+            <label className="block text-gray-600 dark:text-gray-300 text-sm mb-1">Serial Number</label>
             <input
               type="text" name="serialNumber" value={formData.serialNumber} onChange={handleChange} required
-              className="w-full px-3 py-2 rounded bg-gray-700 text-white border border-gray-600 focus:outline-none focus:border-blue-500"
+              className="w-full px-3 py-2 rounded bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white border border-gray-300 dark:border-gray-600 focus:outline-none focus:border-blue-500"
             />
           </div>
           <div>
-            <label className="block text-gray-300 text-sm mb-1">Asset Tag</label>
+            <label className="block text-gray-600 dark:text-gray-300 text-sm mb-1">Asset Tag</label>
             <input
               type="text" name="assetTag" value={formData.assetTag} onChange={handleChange}
-              className="w-full px-3 py-2 rounded bg-gray-700 text-white border border-gray-600 focus:outline-none focus:border-blue-500"
+              className="w-full px-3 py-2 rounded bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white border border-gray-300 dark:border-gray-600 focus:outline-none focus:border-blue-500"
               placeholder="e.g. CU-CS-0001"
             />
           </div>
           <div>
-            <label className="block text-gray-300 text-sm mb-1">Department</label>
+            <label className="block text-gray-600 dark:text-gray-300 text-sm mb-1">Department</label>
             <select
               name="department" value={formData.department} onChange={handleChange} required
-              className="w-full px-3 py-2 rounded bg-gray-700 text-white border border-gray-600 focus:outline-none focus:border-blue-500"
+              className="w-full px-3 py-2 rounded bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white border border-gray-300 dark:border-gray-600 focus:outline-none focus:border-blue-500"
             >
-             {departments.map((dept) => (
-              <option key={dept._id} value={dept.name}>{dept.name}</option>
-            ))}
+              {departments.map((dept) => (
+                <option key={dept._id} value={dept.name}>{dept.name}</option>
+              ))}
             </select>
           </div>
           <div>
-            <label className="block text-gray-300 text-sm mb-1">Location</label>
+            <label className="block text-gray-600 dark:text-gray-300 text-sm mb-1">Location</label>
             <input
               type="text" name="location" value={formData.location} onChange={handleChange} required
-              className="w-full px-3 py-2 rounded bg-gray-700 text-white border border-gray-600 focus:outline-none focus:border-blue-500"
+              className="w-full px-3 py-2 rounded bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white border border-gray-300 dark:border-gray-600 focus:outline-none focus:border-blue-500"
             />
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-gray-300 text-sm mb-1">Status</label>
+              <label className="block text-gray-600 dark:text-gray-300 text-sm mb-1">Status</label>
               <select
                 name="status" value={formData.status} onChange={handleChange}
-                className="w-full px-3 py-2 rounded bg-gray-700 text-white border border-gray-600 focus:outline-none focus:border-blue-500"
+                className="w-full px-3 py-2 rounded bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white border border-gray-300 dark:border-gray-600 focus:outline-none focus:border-blue-500"
               >
                 <option value="available">Available</option>
                 <option value="in_use">In Use</option>
@@ -154,10 +152,10 @@ function EditAsset() {
               </select>
             </div>
             <div>
-              <label className="block text-gray-300 text-sm mb-1">Condition</label>
+              <label className="block text-gray-600 dark:text-gray-300 text-sm mb-1">Condition</label>
               <select
                 name="condition" value={formData.condition} onChange={handleChange}
-                className="w-full px-3 py-2 rounded bg-gray-700 text-white border border-gray-600 focus:outline-none focus:border-blue-500"
+                className="w-full px-3 py-2 rounded bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white border border-gray-300 dark:border-gray-600 focus:outline-none focus:border-blue-500"
               >
                 <option value="excellent">Excellent</option>
                 <option value="good">Good</option>
@@ -168,17 +166,17 @@ function EditAsset() {
             </div>
           </div>
           <div>
-            <label className="block text-gray-300 text-sm mb-1">Vendor</label>
+            <label className="block text-gray-600 dark:text-gray-300 text-sm mb-1">Vendor</label>
             <input
               type="text" name="vendor" value={formData.vendor} onChange={handleChange}
-              className="w-full px-3 py-2 rounded bg-gray-700 text-white border border-gray-600 focus:outline-none focus:border-blue-500"
+              className="w-full px-3 py-2 rounded bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white border border-gray-300 dark:border-gray-600 focus:outline-none focus:border-blue-500"
             />
           </div>
           <div>
-            <label className="block text-gray-300 text-sm mb-1">Description</label>
+            <label className="block text-gray-600 dark:text-gray-300 text-sm mb-1">Description</label>
             <textarea
               name="description" value={formData.description} onChange={handleChange} rows={2}
-              className="w-full px-3 py-2 rounded bg-gray-700 text-white border border-gray-600 focus:outline-none focus:border-blue-500"
+              className="w-full px-3 py-2 rounded bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white border border-gray-300 dark:border-gray-600 focus:outline-none focus:border-blue-500"
             />
           </div>
 
@@ -191,7 +189,7 @@ function EditAsset() {
             </button>
             <button
               type="button" onClick={() => navigate(`/assets/${id}`)}
-              className="text-gray-400 hover:text-white text-sm px-4 py-2"
+              className="text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white text-sm px-4 py-2"
             >
               Cancel
             </button>

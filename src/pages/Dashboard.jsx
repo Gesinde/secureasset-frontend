@@ -5,12 +5,12 @@ function Dashboard() {
   const { user } = useAuth();
 
   return (
-    <div className="min-h-screen bg-gray-900">
+    <div className="min-h-screen bg-gray-100 dark:bg-gray-900">
       <Navbar />
       <div className="p-8">
-        <h1 className="text-2xl font-bold text-white mb-2">Dashboard</h1>
-        <p className="text-gray-300">Welcome, {user?.name}</p>
-        <p className="text-gray-400 text-sm mt-1">
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Dashboard</h1>
+        <p className="text-gray-600 dark:text-gray-300">Welcome, {user?.name}</p>
+        <p className="text-gray-500 dark:text-gray-400 text-sm mt-1">
           Role: {user?.role} · Department: {user?.department}
         </p>
       </div>
@@ -19,4 +19,3 @@ function Dashboard() {
 }
 
 export default Dashboard;
-
